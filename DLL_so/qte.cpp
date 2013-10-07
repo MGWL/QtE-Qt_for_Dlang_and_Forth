@@ -1,5 +1,9 @@
 // +----------------------------------------------------------------+
+<<<<<<< HEAD
 // | Ïðîåêò QtE (wrapping QT for SPF and D)                               |
+=======
+// | ÐŸÑ€Ð¾ÐµÐºÑ‚ QtE (wrapping QT for SPF and D)                         |
+>>>>>>> 1dbcd71dfa94e5a14aae6d25830747c2fb24bc95
 // | MGW,  22.07.13 14:12                                           |
 // +----------------------------------------------------------------+
 
@@ -10,7 +14,11 @@ extern "C" void* adrNameCodec(void) {
     return &NameCodec;
 }
 
+<<<<<<< HEAD
 // Õì, èíòåðåñíî - òàê ñäåëàíî â Lazarus, ïðîâåðèì .....
+=======
+// Ð¥Ð¼, Ð¸Ð½Ñ‚ÐµÑ€ÐµÑÐ½Ð¾ - Ñ‚Ð°Ðº ÑÐ´ÐµÐ»Ð°Ð½Ð¾ Ð² Lazarus, Ð¿Ñ€Ð¾Ð²ÐµÑ€Ð¸Ð¼ .....
+>>>>>>> 1dbcd71dfa94e5a14aae6d25830747c2fb24bc95
 extern "C" int QApplication_exec()
 {
     return (int) QApplication::exec();
@@ -20,7 +28,11 @@ extern "C" void* QApplication_create(int* argc, char** argv, bool GUIenabled)
     return (void*) new QApplication(*(int*)argc, argv, GUIenabled);
 }
 // --------- Lazarus ---------
+<<<<<<< HEAD
 // Ôèãíÿ...  Â Linux íå ðàáîòàå, îøèáêà ñåãìåíòàöèè.
+=======
+// Ð¤Ð¸Ð³Ð½Ñ...  Ð’ Linux Ð½Ðµ Ñ€Ð°Ð±Ð¾Ñ‚Ð°Ðµ, Ð¾ÑˆÐ¸Ð±ÐºÐ° ÑÐµÐ³Ð¼ÐµÐ½Ñ‚Ð°Ñ†Ð¸Ð¸.
+>>>>>>> 1dbcd71dfa94e5a14aae6d25830747c2fb24bc95
 
 
 // ==================== QLineEdit ======================
@@ -38,16 +50,28 @@ void eLineEdit::returnPressed1()
             ((ExecZIM_0_0)aReturnPressed)();
         }
 }
+<<<<<<< HEAD
 // !!! Âûäàòü QLineEdit íà ñòåê
 extern "C" void *QT_QLineEdit(QWidget* parent) {
         return  new eLineEdit(parent);
 }
 // !!! Óñòàíîâèòü îáðàáîò÷èê
+=======
+// !!! Ð’Ñ‹Ð´Ð°Ñ‚ÑŒ QLineEdit Ð½Ð° ÑÑ‚ÐµÐº
+extern "C" void *QT_QLineEdit(QWidget* parent) {
+        return  new eLineEdit(parent);
+}
+// !!! Ð£ÑÑ‚Ð°Ð½Ð¾Ð²Ð¸Ñ‚ÑŒ Ð¾Ð±Ñ€Ð°Ð±Ð¾Ñ‚Ñ‡Ð¸Ðº
+>>>>>>> 1dbcd71dfa94e5a14aae6d25830747c2fb24bc95
 extern "C" void QT_QLineEdit_onreturnPressed(eLineEdit* qw, void *uk) {
     qw->aReturnPressed = uk;
     qw->connect(qw, SIGNAL( returnPressed() ), qw, SLOT( returnPressed1()));
 }
+<<<<<<< HEAD
 // !!! Òåêñò ñòðîêè LineEdit â QString
+=======
+// !!! Ð¢ÐµÐºÑÑ‚ ÑÑ‚Ñ€Ð¾ÐºÐ¸ LineEdit Ð² QString
+>>>>>>> 1dbcd71dfa94e5a14aae6d25830747c2fb24bc95
 extern "C" void QT_QLineEdit_text(eLineEdit* qw, QString *qstr) {
      *qstr = qw->text();
 }
@@ -67,7 +91,11 @@ extern "C" void QT_QLineEdit_clear(eLineEdit* qw) {
 extern "C" QTextCodec* p_QTextCodec(char* strNameCodec) {
     return QTextCodec::codecForName(strNameCodec);
 }
+<<<<<<< HEAD
 // Ïåðåïðèñâàèâàíèå QString
+=======
+// ÐŸÐµÑ€ÐµÐ¿Ñ€Ð¸ÑÐ²Ð°Ð¸Ð²Ð°Ð½Ð¸Ðµ QString
+>>>>>>> 1dbcd71dfa94e5a14aae6d25830747c2fb24bc95
 extern "C" void QT_QTextCodec_toUnicode(QTextCodec *codec, QString *qstr, char *strz) {
     *qstr = codec->toUnicode(strz);
 }
@@ -76,9 +104,14 @@ extern "C" void QT_QTextCodec_fromUnicode(QTextCodec *codec, QString *qstr, char
 }
 
 // ================= QWidget =================
+<<<<<<< HEAD
 extern "C" void* p_QWidget(QWidget* parent, Qt::WindowFlags f) {
 //    if (f == 0) {};
     return new eQWidget(parent);
+=======
+extern "C" QWidget* p_QWidget(QWidget* parent, Qt::WindowFlags f) {
+    return new QWidget(parent);
+>>>>>>> 1dbcd71dfa94e5a14aae6d25830747c2fb24bc95
 }
 extern "C" void resize_QWidget(QWidget* wid, int w, int h) {
     wid->resize(w, h);
@@ -111,29 +144,41 @@ extern "C" QString* qs_test(void) {
 extern "C" QString* new_QString(void) {
     return new QString();
 }
-// QString èç wchar
+// QString Ð¸Ð· wchar
 extern "C" QString* new_QString_wchar(QChar* s, int size) {
     return new QString(s, size);
 }
-// !!! Çàïèñü ñòðîêè â QString
+// !!! Ð—Ð°Ð¿Ð¸ÑÑŒ ÑÑ‚Ñ€Ð¾ÐºÐ¸ Ð² QString
 extern "C" void QT_QString_set(QString *qstr, char *strz) {
     QTextCodec *codec = QTextCodec::codecForName(NameCodec);  // "Windows-1251"
     *qstr = codec->toUnicode(strz);
 }
+<<<<<<< HEAD
 // Äëÿ ïåðåêîäèðîâêè ñòðîêè èç/â íåîáõîäèìî ó÷àñòèå QTextCodec
+=======
+// Ð”Ð»Ñ Ð¿ÐµÑ€ÐµÐºÐ¾Ð´Ð¸Ñ€Ð¾Ð²ÐºÐ¸ ÑÑ‚Ñ€Ð¾ÐºÐ¸ Ð¸Ð·/Ð² Ð½ÐµÐ¾Ð±Ñ…Ð¾Ð´Ð¸Ð¼Ð¾ ÑƒÑ‡Ð°ÑÑ‚Ð¸Ðµ QTextCodec
+>>>>>>> 1dbcd71dfa94e5a14aae6d25830747c2fb24bc95
 extern "C" void QT_QString_toUnicode(QString *qstr, char *strz, QTextCodec *codec) {
     // QTextCodec *codec1 = QTextCodec::codecForName("UTF-8");  // "Windows-1251"
     // printf("Debug toUnicode: strz = %s\n", strz);
     *qstr = codec->toUnicode(strz);
 }
+<<<<<<< HEAD
 // Äëÿ ïåðåêîäèðîâêè ñòðîêè èç/â íåîáõîäèìî ó÷àñòèå QTextCodec
+=======
+// Ð”Ð»Ñ Ð¿ÐµÑ€ÐµÐºÐ¾Ð´Ð¸Ñ€Ð¾Ð²ÐºÐ¸ ÑÑ‚Ñ€Ð¾ÐºÐ¸ Ð¸Ð·/Ð² Ð½ÐµÐ¾Ð±Ñ…Ð¾Ð´Ð¸Ð¼Ð¾ ÑƒÑ‡Ð°ÑÑ‚Ð¸Ðµ QTextCodec
+>>>>>>> 1dbcd71dfa94e5a14aae6d25830747c2fb24bc95
 extern "C" int QT_QString_fromUnicode(QString *qstr, char *strz, QTextCodec *codec) {
     // QTextCodec *codec = QTextCodec::codecForName(NameCodec);  // "Windows-1251"
     // sprintf((strz+1), "%s", codec->fromUnicode(*qstr).data());    *strz = strlen(strz+1);
     sprintf(strz, "%s", codec->fromUnicode(*qstr).data());  //   *strz = strlen(strz+1);
     return strlen(strz);
 }
+<<<<<<< HEAD
 // !!! Èç QString â CHAR *
+=======
+// !!! Ð˜Ð· QString Ð² CHAR *
+>>>>>>> 1dbcd71dfa94e5a14aae6d25830747c2fb24bc95
 extern "C" void QT_QString_text(QString *qstr, char *strz) {
     QTextCodec *codec = QTextCodec::codecForName(NameCodec);  // "Windows-1251"
     sprintf((strz+1), "%s", codec->fromUnicode(*qstr).data());
@@ -165,7 +210,11 @@ void eSlot::Slot0()
 {
     if (aSlot0 != NULL)  ((ExecZIM_0_0)aSlot0)();
 }
+<<<<<<< HEAD
 void eSlot::Slot1_int(size_t par1)
+=======
+void eSlot::Slot1_int(int par1)
+>>>>>>> 1dbcd71dfa94e5a14aae6d25830747c2fb24bc95
 {
     if (aSlot1 != NULL) ((ExecZIM_1_0)aSlot1)((void*)par1);
 }
@@ -268,7 +317,11 @@ extern "C" void QT_QApp_setPalette(QApplication* app, QPalette* pal)
 {
        app->setPalette(*pal);
 }
+<<<<<<< HEAD
 // ===================== QScriptEngine =====================
+=======
+// ===================== QApplication =====================
+>>>>>>> 1dbcd71dfa94e5a14aae6d25830747c2fb24bc95
 extern "C" void* QT_QScriptEngine(void)
 {
        return new QScriptEngine();

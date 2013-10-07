@@ -1,5 +1,9 @@
 // +----------------------------------------------------------------+
+<<<<<<< HEAD
 // | Ïðîåêò QtE (wrapping QT for SPF and D)                               |
+=======
+// | ÐŸÑ€Ð¾ÐµÐºÑ‚ QtE (wrapping QT for SPF and D)                         |
+>>>>>>> 1dbcd71dfa94e5a14aae6d25830747c2fb24bc95
 // | MGW,  22.07.13 14:12                                           |
 // +----------------------------------------------------------------+
 
@@ -8,9 +12,15 @@
 #define QTE_H
 
 // For compile in Windows define WINDOWF, disable LINUXF
+<<<<<<< HEAD
 // #define WINDOWSF
 // For compile in Linux define LINUXF, disable WINDOWF
 #define LINUXF
+=======
+#define WINDOWSF
+// For compile in Linux define LINUXF, disable WINDOWF
+// #define LINUXF
+>>>>>>> 1dbcd71dfa94e5a14aae6d25830747c2fb24bc95
 
 #ifdef LINUXF
   #include <QApplication>
@@ -49,22 +59,35 @@
 
 #define FQT_API QTESHARED_EXPORT
 
+<<<<<<< HEAD
 typedef void (*ExecZIM_1_0)( void* );    //  îïðåäåëèì  òèï  äëÿ âûçûâàåìîé ôóíêöèè
+=======
+typedef void (*ExecZIM_1_0)( void* );    //  Ð¾Ð¿Ñ€ÐµÐ´ÐµÐ»Ð¸Ð¼  Ñ‚Ð¸Ð¿  Ð´Ð»Ñ Ð²Ñ‹Ð·Ñ‹Ð²Ð°ÐµÐ¼Ð¾Ð¹ Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¸
+>>>>>>> 1dbcd71dfa94e5a14aae6d25830747c2fb24bc95
 typedef void (*ExecZIM_0_0)( void  );
 
 class eSlot : public QObject
 {
     Q_OBJECT
 public:
+<<<<<<< HEAD
     void* aSlot0;       // Õðàíèò àäðåñ D ôóíêöèè
     void* aSlot1;       // Õðàíèò àäðåñ D ôóíêöèè
+=======
+    void* aSlot0;       // Ð¥Ñ€Ð°Ð½Ð¸Ñ‚ Ð°Ð´Ñ€ÐµÑ D Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¸
+    void* aSlot1;       // Ð¥Ñ€Ð°Ð½Ð¸Ñ‚ Ð°Ð´Ñ€ÐµÑ D Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¸
+>>>>>>> 1dbcd71dfa94e5a14aae6d25830747c2fb24bc95
     eSlot(QObject* parent = 0);
     ~eSlot();
     void sendSignal0();
     void sendSignal1(void*);
 public slots:
     void Slot0();
+<<<<<<< HEAD
     void Slot1_int(size_t);
+=======
+    void Slot1_int(int);
+>>>>>>> 1dbcd71dfa94e5a14aae6d25830747c2fb24bc95
 signals:
     void Signal0();
     void Signal1(void*);
