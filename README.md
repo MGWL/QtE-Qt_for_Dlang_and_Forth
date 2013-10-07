@@ -1,7 +1,9 @@
 QtE
 ===
 
-Qt wrapper for the D language (dmd D2 dlang) and Forth (SPF-4.20) language. 
+Qt wrapper for the D language (dmd D2 dlang) and Forth (SPF-4.20) language.
+
+This works in Windows 32 and Linux 32 / 64 
 
 This is a small study library to work with Qt. It uses dynamic linking and easy to use. 
 It works on Windows and Linux. The way it works is simple: through the modules 
