@@ -1,5 +1,5 @@
 // +----------------------------------------------------------------+
-// | QtE (wrapping QT for SPF and D)                               |
+// | Проект QtE (wrapping QT for SPF and D)                               |
 // | MGW,  22.07.13 14:12                                           |
 // +----------------------------------------------------------------+
 
@@ -7,10 +7,10 @@
 #ifndef QTE_H
 #define QTE_H
 
-// Delete comment for Windows and set for Linux
-#define WINDOWSF
-// #define LINUXF
-// -------------------------------------------
+// For compile in Windows define WINDOWF, disable LINUXF
+// #define WINDOWSF
+// For compile in Linux define LINUXF, disable WINDOWF
+#define LINUXF
 
 #ifdef LINUXF
   #include <QApplication>
@@ -20,6 +20,8 @@
   #include <QTextCodec>
   #include <QMessageBox>
   #include <QtGui>
+  #include <QAction>
+  #include <QtScript>
 #endif
 
 #ifdef WINDOWSF
@@ -30,33 +32,42 @@
   #include <QtGui\QPushButton>
   #include <QtGui\QTextEdit>
   #include <QtGui\QLineEdit>
+  #include <QtGui\QAction>
+  #include <QtGui\QPalette>
+  #include <QtGui\QColor>
+  #include <QtGui\QSpinBox>
+  #include <QtGui\QLCDNumber>
+  #include <QtGui\QMainWindow>
+  #include <QtGui\QStatusBar>
+  #include <QtGui\QMessageBox>
+  #include <QtGui\QLayout>
+  #include <QtGui\QMenu>
+  #include <QtGui\QMenuBar>
+  #include <QtCore\QTextCodec>
+  #include <QtScript>
 #endif
 
 #define FQT_API QTESHARED_EXPORT
 
-typedef void (*ExecZIM_1_0)( void* );   
+typedef void (*ExecZIM_1_0)( void* );    //  определим  тип  для вызываемой функции
 typedef void (*ExecZIM_0_0)( void  );
-
-#ifdef LINUXF
-   // extern "C" char NameCodec[80] = "UTF-8\0";  // для Linux
-#endif
-
-#ifdef WINDOWSF
-    // extern "C" FQT_API char NameCodec[80] = "Windows-1251\0";  // Для Windows
-#endif
 
 class eSlot : public QObject
 {
     Q_OBJECT
 public:
-    void* aSlot0;       // save adr D function
+    void* aSlot0;       // Хранит адрес D функции
+    void* aSlot1;       // Хранит адрес D функции
     eSlot(QObject* parent = 0);
     ~eSlot();
     void sendSignal0();
+    void sendSignal1(void*);
 public slots:
     void Slot0();
+    void Slot1_int(size_t);
 signals:
     void Signal0();
+    void Signal1(void*);
 };
 
 class eQWidget : public QWidget
@@ -70,6 +81,27 @@ public:
 };
 extern "C" eQWidget* p_eQWidget(QWidget*);
 
+class eLineEdit : public QLineEdit
+{
+    Q_OBJECT
+public:
+        eLineEdit(QWidget * parent = 0);
+        ~eLineEdit();
+        void *aReturnPressed;
+public slots:
+        void returnPressed1();
+};
+
+class eAction : public QAction
+{
+    Q_OBJECT
+public:
+        eAction(QObject *parent);
+        ~eAction();
+        void* aOnClick;
+public slots:
+        void OnClick();
+};
 
 #endif // QTE_H
 
