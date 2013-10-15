@@ -56,5 +56,5 @@ int main(string[] args) {
 	gWidget w1 = new gWidget(null, 0);
 	genaMain.show();
 	
-	return app.exec();
+	return app.exec();  // Main loop 
 }
