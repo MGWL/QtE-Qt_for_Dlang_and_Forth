@@ -1,5 +1,5 @@
-﻿// Written in the D programming language.
- 
+// Written in the D programming language. Мохов Геннадий Владимирович 2013
+// Версия v1.001
 /**
   * <b><u>Работа с Qt в Windows 32 и Linux 32 и 64. </u></b>
   *  <br>Зависит от QtE.DLL  (Win32)   или  QtE.so.1.0.0 (Linux32, Linux64)
@@ -53,6 +53,9 @@ version(linux) {
 	import std.stdio;
 }
 
+int verQtEu = 1;
+int verQtEl = 1;  // ver 1.1  64 разрядов на Linux
+
 enum dll {
         Core = 0x1,  Gui = 0x2,    QtE = 0x4,    Script = 0x8
     } /// Загрузка DLL. Необходимо выбрать какие грузить. Load DLL, we mast change load
@@ -67,6 +70,8 @@ immutable int QSIGNAL  = 2;
 
 // alias void   function(void*, void*) 	t_void__voidz_voidz;
 // alias char*  function()  		        t_charP__void;
+
+alias void** GetObjQt_t;   // Дай тип Qt. Происходит неявное преобразование. cast(GetObjQt_t)Z == *Z на любой тип.
 
 private extern (C) alias void  function(void*) 	            				t_v__vp;
 private extern (C) alias void  function(void*, void*) 	    				t_v__vp_vp;
@@ -133,6 +138,9 @@ private extern (C) alias  void* function()   					t_new_QMessageBox;
 private extern (C) alias  int function(void*)  			t_QMessageBox_exec;
 // QBoxLayout
 private extern (C) alias void* function(QBoxLayout.Direction, void*) t_QBoxLayout;
+// QWebView
+//private extern (C) alias void* function(QBoxLayout.Direction, void*) t_QBoxLayout;
+
 /++
 	Сообщение (andalog msgbox() VBA). Пример: msgbox("Это msgbox!", "Проверка!");
 +/		
@@ -199,9 +207,9 @@ char* MSS(string s, int n) {
 } /// Моделирует макросы QT. Model macros Qt. For n=2->SIGNAL(), n=1->SLOT(), n=0->METHOD().
 
 // Скопировать строку с 0 в конце. Copy stringz.
-void copyz(char* from, char* to) {
-	for( int i=0; ; i++ ) {	*(to+i) = *(from+i); if (*(from+i) == '\0')  break;	}
-}
+void copyz(char* from, char* to) { for( int i=0; ; i++ ) {	*(to+i) = *(from+i); if (*(from+i) == '\0')  break;	} }
+// Длина строки без 0
+int strlenz(char* from) { int i; for( i=0; ; i++ ) { if (*(from+i) == '\0')  break;	} return i; }
 
 int LoadQt(dll ldll, bool showError) {   ///  Загрузить DLL-ки Qt и QtE
 	void* hQtGui; void* hQtCore; void* hQtE; void* hQtScript;             // handes for dll
@@ -356,6 +364,13 @@ int LoadQt(dll ldll, bool showError) {   ///  Загрузить DLL-ки Qt и 
 //  	pFunQt[86] = GetPrAddres(bQtE, hQtE, "QT_QMenu_setTitle"); if (!pFunQt[86]) MessageErrorLoad(showError, "QT_QMenu_setTitle"w, 2);
   	pFunQt[86] = GetPrAddres(bGui, hQtGui, "_ZN5QMenu8setTitleERK7QString"); if (!pFunQt[86]) MessageErrorLoad(showError, "_ZN5QMenu8setTitleERK7QString"w, 2);
     // 87 - занят
+  // QWebView
+  	pFunQt[88] = GetPrAddres(bQtE, hQtE, "QT_QWebView"); if (!pFunQt[88]) MessageErrorLoad(showError, "QT_QWebView"w, 2);
+  	pFunQt[91] = GetPrAddres(bQtE, hQtE, "QT_QWebView_load"); if (!pFunQt[91]) MessageErrorLoad(showError, "QT_QWebView_load"w, 2);
+  // QUrl
+  	pFunQt[89] = GetPrAddres(bQtE, hQtE, "QT_QUrl"); if (!pFunQt[89]) MessageErrorLoad(showError, "QT_QUrl"w, 2);
+  	pFunQt[90] = GetPrAddres(bCore, hQtCore, "_ZN4QUrl6setUrlERK7QString"); if (!pFunQt[90]) MessageErrorLoad(showError, "QUrl::setUrl(QString)"w, 2);
+  
 	return 0;
 } ///  Загрузить DLL-ки Qt и QtE. Найти в них адреса функций и заполнить ими таблицу
 
@@ -1253,5 +1268,30 @@ class QMenu: gWidget {
 	} /// Добавить сепаратор 
 	void setTitle(QString str) {
 		(cast(t_v__vp_vp)pFunQt[86])(p_QObject, cast(void*)str.QtObj);
+	} /// Добавить сепаратор 
+}
+// ============ QWebView =======================================
+class QWebView: gWidget {
+	this(gWidget parent) {
+		super();  //  Это заглушка, что бы наследовать D класс не создавая экземпляра в Qt C++
+		if (parent) {
+			p_QObject = (cast(t_vp__vp)pFunQt[88])(parent.p_QObject);
+		}
+		else {
+			p_QObject = (cast(t_vp__vp)pFunQt[88])(null);
+		}
+	} /// Конструктор, где parent - сылка на родительский виджет
+	void load(QUrl url) {
+		(cast(t_v__vp_vp)pFunQt[91])(p_QObject, cast(void*)url.QtObj);
+	} /// Добавить сепаратор 
+}
+// ============ QUrl =======================================
+class QUrl: QObject  {
+	this() {
+		super();
+			p_QObject = (cast(t_vp__v)pFunQt[89])();
+	}
+	void setUrl(QString str) {
+		(cast(t_v__vp_vp)pFunQt[90])(p_QObject,  cast(GetObjQt_t)str.QtObj);
 	} /// Добавить сепаратор 
 }
