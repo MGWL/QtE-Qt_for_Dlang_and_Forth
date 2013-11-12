@@ -24,19 +24,29 @@
  /++
  + Example:
  + ---
- + import lib_qt;
- + int main(string[] args) {
- + {
- +    /* Цепляем библиотеки QtCore, QtGui, QtE. */
- +     int rez = LoadQt(); if (rez==1) return 1;  // Ошибка загрузки библиотеки
- +	  // Изврат связанный с тем, что  вызов конструктора QApplication 
- +	  // должен быть произведен в main() 
- +	  (app.adrQApplication())(cast(void*)app.bufObj, &Runtime.cArgs.argc, Runtime.cArgs.argv);
- +    // Создать окно, изм размер и отобразить
- +	   gWidget w2 = new gWidget(null, 0); w2.resize(400, 50); w2.show();
- +    // Ждать и обрабатывать графические события
- +     return app.exec();
- + }
+ +import qte;          // Работа с Qt
+ +import core.runtime;
+ +
+ +class MainWin: QMainWindow {
+ +	this() {
+ +		super();
+ +	}
+ +}
+ +
+ +int main(string[] args) {
+ +	// Цепляем библиотеки QtCore, QtGui, QtE, QtScript или их комбинацию.
+ +	int rez = LoadQt( dll.Core | dll.Gui | dll.QtE, true );
+ +	if (rez==1) return 1;  // Ошибка загрузки библиотеки
+ +	
+ +	QApplication app = new QApplication;  // Создали, но конструктор не вызван
+ +	(app.adrQApplication())(cast(void*)app.bufObj, &Runtime.cArgs.argc, Runtime.cArgs.argv, true);
+ +
+ +	// Создаём основное окно приложения
+ +	MainWin mainWin = new MainWin();
+ +	mainWin.show();
+ +	
+ +	return app.exec();
+ +}
  + ---
  +/  
 module qte;
