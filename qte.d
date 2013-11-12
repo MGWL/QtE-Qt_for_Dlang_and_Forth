@@ -60,7 +60,7 @@ enum dll {
         Core = 0x1,  Gui = 0x2,    QtE = 0x4,    Script = 0x8
     } /// Загрузка DLL. Необходимо выбрать какие грузить. Load DLL, we mast change load
 
-private void* pFunQt[110];   /// Масив указателей на функции из DLL
+private void* pFunQt[110];   /// Массив указателей на функции из DLL
 
 immutable int QMETHOD =  0;                        // member type codes
 immutable int QSLOT  = 1;
@@ -142,7 +142,7 @@ private extern (C) alias void* function(QBoxLayout.Direction, void*) t_QBoxLayou
 //private extern (C) alias void* function(QBoxLayout.Direction, void*) t_QBoxLayout;
 
 /++
-	Сообщение (andalog msgbox() VBA). Пример: msgbox("Это msgbox!", "Проверка!");
+	Сообщение (VBA msgbox() analog). Пример: msgbox("Это msgbox!", "Проверка!");
 +/		
 static void msgbox(string text = null, string caption = null, QMessageBox.Icon icon = QMessageBox.Icon.Information) {
 	QString qs_str = new QString();	qs_str.setNameCodec("UTF-8");
@@ -642,7 +642,7 @@ class QtE {
 class QObject {
 	void* p_QObject;		/// Адрес самого объекта из C++ Qt
 	this() {	
-	} /// спец Конструктор, что бы не делать реальный объект из Qt при наследовании
+	} /// спец Конструктор, чтобы не делать реальный объект из Qt при наследовании
 	this(void* parent) {
 		p_QObject = (cast(t_QObject)pFunQt[26])(parent);
 	} /// Конструктор. Создает рельный QObject и сохраняет его адрес в p_QObject
@@ -678,7 +678,7 @@ class QTextCodec {
 /++
 	Класс приложения. <b>Внимание:</b>
 	<br>Определяется один раз в main() и обязательно формат вызова как в примере
-	<br>(см. выше), иначе в Linux ошибка --> Segn... fault.
+	<br>(см. выше), иначе в Linux ошибка --> Segmentation fault.
 +/		
 class QApplication: QObject {
 	size_t bufObj[2];     // данные объекта, 8=w32, 16=w64
@@ -730,8 +730,8 @@ class gWidget: QObject  {
 	}  /// Конструктор
 	this() {	
 		super();
-	} /// спец Конструктор, что бы не делать реальный объект из Qt при наследовании
-	void setVisible(bool f) {					// Скрыть, Показать виджет
+	} /// спец Конструктор, чтобы не делать реальный объект из Qt при наследовании
+	void setVisible(bool f) {					// Скрыть/Показать виджет
             (cast(t_QWidget_setVisible)pFunQt[5])(p_QObject, f);
 	}  /// Включить/Выключить - это реальный setVisible из QtGui.dll
 	void show() {
@@ -796,13 +796,13 @@ class QString {
 	} /// Конструктор пустого QString
 	this(wstring s) {
 		p_QString = (cast(t_QString_wchar)pFunQt[18])(cast(wchar*)s, s.length);
-	} /// Конструктор где s - unicod. Пример: QString qs = new QString("Привет!"w);
+	} /// Конструктор, где s - unicode. Пример: QString qs = new QString("Привет!"w);
 	void clear() {
 		(cast(t_QString_clear)pFunQt[11])(p_QString);
 	} /// Очистить строку
 	void fromUtf8(char* str, int dl = -1) {
 		(cast(t_QString_fromUtf8)pFunQt[14])(p_QString, str, dl);
-	} /// Из внутреннего кода в char*, или всё ( нет второго аргумента )или кол символов (второй аргумент)
+	} /// Из внутреннего кода в char*, или всё (нет второго аргумента) или кол символов (второй аргумент)
 	void* toAscii() {
 		return (cast(t_QString_toAscii)pFunQt[15])(p_QString);
 	} /// В ascii
@@ -841,14 +841,14 @@ class QString {
 +/		
 class QTextEdit: gWidget {
 	this(gWidget parent) {
-		super();  //  Это заглушка, что бы наследовать D класс не создавая экземпляра в Qt C++
+		super();  //  Это заглушка, чтобы наследовать D класс не создавая экземпляра в Qt C++
 		if (parent) {
 			p_QObject = (cast(t_p_QTextEdit)pFunQt[20])(parent.p_QObject);
 		}
 		else {
 			p_QObject = (cast(t_p_QTextEdit)pFunQt[20])(null);
 		}
-	} /// Конструктор, где parent - сылка на родительский виджет
+	} /// Конструктор, где parent - ссылка на родительский виджет
 	void append(QString str) {
 		(cast(t_v__vp_vp)pFunQt[21])(p_QObject, str.QtObj);
 	} /// Добавить строку str
@@ -866,7 +866,7 @@ class QTextEdit: gWidget {
 +/		
 class gPushButton: gWidget {
 	this(gWidget parent, QString str) {
-		super();	// Это фактически заглушка, что бы сделать наследование, 
+		super();	// Это фактически заглушка, чтобы сделать наследование, 
 				// не создавая промежуточного экземпляра в Qt
 		if (parent) {
 			p_QObject = (cast(t_vp__vp_vp)pFunQt[24])(parent.p_QObject, str.QtObj);
@@ -886,7 +886,7 @@ class gPushButton: gWidget {
 +/		
 class QLineEdit: gWidget {
 	this(gWidget parent) {
-		super();	// Это фактически заглушка, что бы сделать наследование, 
+		super();	// Это фактически заглушка, чтобы сделать наследование, 
 				// не создавая промежуточного экземпляра в Qt
 		if (parent) {
 			p_QObject = (cast(t_vp__vp)pFunQt[71])(parent.p_QObject);
@@ -898,7 +898,7 @@ class QLineEdit: gWidget {
 	void setOnReturnPressed(void* adr) {		// Установить обработчик на событие OnReturnPressed
 		(cast(t_v__vp_vp)pFunQt[72])(p_QObject, adr);
 	} /++ Установить обработчик на событие OnReturnPressed. Здесь <u>adr</u> - адрес на функцию D
-	  + обрабатывающую событие.  Обработчик получает аргумент. См. док. Qt
+	  + обрабатывающую событие. Обработчик получает аргумент. См. док. Qt
 	  +/
 	void set(QString adr) {	
 		(cast(t_v__vp_vp)pFunQt[74])(p_QObject, adr.QtObj);
@@ -918,7 +918,7 @@ class QLineEdit: gWidget {
 /++
 	gSlot - это набор слотов, хранящих в себе адрес вызываемой функции из D.
 	<br>В D нет возможности создать слот, по этому в QtE.dll создан класс, который есть набор слотов
-	с разными типами вызовов функции на D. Без аргументов, с одним аргументом с двумя и т.д.
+	с разными типами вызовов функции на D. Без аргументов, с одним аргументом, с двумя и т.д.
 	для реакции на события. 
 +/		
 class gSlot: QObject  {
@@ -931,7 +931,7 @@ class gSlot: QObject  {
 	} /// Установить адрес вызываемой функции D без аргументов
 	void emitSignal0() {
 		(cast(t_eSlot_setSignal0)pFunQt[25])(p_QObject);
-	} /// Послать сигнал "Signal0()"без аргументов
+	} /// Послать сигнал "Signal0()" без аргументов
 }
 // ================ QMessageBox ================
 /++
@@ -997,7 +997,7 @@ class QMessageBox: gWidget {
 	alias StandardButton Button;
 	
 	this(gWidget parent) {
-		super();	// Это фактически заглушка, что бы сделать наследование, 
+		super();	// Это фактически заглушка, чтобы сделать наследование, 
 				// не создавая промежуточного экземпляра в Qt
 		if (parent) {
 			p_QObject = (cast(t_new_QMessageBox)pFunQt[36])();
@@ -1044,7 +1044,7 @@ class QBoxLayout: QObject  {
         BottomToTop = 3
 	} /// enum Direction { LeftToRight, RightToLeft, TopToBottom, BottomToTop }
 	this() {	
-	} /// спец Конструктор, что бы не делать реальный объект из Qt при наследовании
+	} /// спец Конструктор, чтобы не делать реальный объект из Qt при наследовании
 	this(QBoxLayout.Direction dir, gWidget parent) {
 		super();
 		if (parent) {
@@ -1079,7 +1079,7 @@ class QHBoxLayout: QBoxLayout  {
 +/		
 class QMainWindow: gWidget {
 	this() {
-		super();  //  Это заглушка, что бы наследовать D класс не создавая экземпляра в Qt C++
+		super();  //  Это заглушка, чтобы наследовать D класс не создавая экземпляра в Qt C++
 		p_QObject = (cast(t_vp__v)pFunQt[54])();
 	} /// Конструктор основного окна приложения
 	void setStatusBar(QStatusBar sb) {
@@ -1099,14 +1099,14 @@ class QMainWindow: gWidget {
 +/		
 class QStatusBar: gWidget {
 	this(gWidget parent) {
-		super();  //  Это заглушка, что бы наследовать D класс не создавая экземпляра в Qt C++
+		super();  //  Это заглушка, чтобы наследовать D класс не создавая экземпляра в Qt C++
 		if (parent) {
 			p_QObject = (cast(t_vp__vp)pFunQt[51])(parent.p_QObject);
 		}
 		else {
 			p_QObject = (cast(t_vp__vp)pFunQt[51])(null);
 		}
-	} /// Конструктор, где parent - сылка на родительский виджет
+	} /// Конструктор, где parent - ссылка на родительский виджет
 }
 // ================ QLCDNumber ================
 /++
@@ -1117,14 +1117,14 @@ class QLCDNumber: gWidget {
     enum SegmentStyle { Outline, Filled, Flat }
 
 	this(gWidget parent) {
-		super();  //  Это заглушка, что бы наследовать D класс не создавая экземпляра в Qt C++
+		super();  //  Это заглушка, чтобы наследовать D класс не создавая экземпляра в Qt C++
 		if (parent) {
 			p_QObject = (cast(t_vp__vp)pFunQt[55])(parent.p_QObject);
 		}
 		else {
 			p_QObject = (cast(t_vp__vp)pFunQt[55])(null);
 		}
-	} /// Конструктор, где parent - сылка на родительский виджет
+	} /// Конструктор, где parent - ссылка на родительский виджет
 	void setSegmentStyle(QLCDNumber.SegmentStyle style) {
 		(cast(t_v__vp_SegmentStyle)pFunQt[57])(p_QObject, style);
 	} /// Способ изображения сегментов
@@ -1135,14 +1135,14 @@ class QLCDNumber: gWidget {
 +/		
 class QSpinBox: gWidget {
 	this(gWidget parent) {
-		super();  //  Это заглушка, что бы наследовать D класс не создавая экземпляра в Qt C++
+		super();  //  Это заглушка, чтобы наследовать D класс не создавая экземпляра в Qt C++
 		if (parent) {
 			p_QObject = (cast(t_vp__vp)pFunQt[56])(parent.p_QObject);
 		}
 		else {
 			p_QObject = (cast(t_vp__vp)pFunQt[56])(null);
 		}
-	} /// Конструктор, где parent - сылка на родительский виджет
+	} /// Конструктор, где parent - ссылка на родительский виджет
 }
 // ================ QPalette ================
 /++
@@ -1161,7 +1161,7 @@ class QPalette: QObject {
                      Foreground = WindowText, Background = Window // ### Qt 5: remove
                    };	
 	this() {
-		super();  //  Это заглушка, что бы наследовать D класс не создавая экземпляра в Qt C++
+		super();  //  Это заглушка, чтобы наследовать D класс не создавая экземпляра в Qt C++
 		p_QObject = (cast(t_vp__v)pFunQt[58])();
 	} /// Конструктор
 	this(void* uk) {
@@ -1203,12 +1203,12 @@ class QScriptEngine: QObject  {
 // ================ QAction ================
 /++
 	QAction - это класс выполнителей (действий). Объеденяют в себе
-	различные формы вызовов: из меню, из горячих кнопок, их панели с кнопками
+	различные формы вызовов: из меню, из горячих кнопок, из панели с кнопками
 	и т.д. Реально представляет собой строку меню в вертикальном боксе.
 +/		
 class QAction: QObject  {
 	this() {	
-	} /// спец Конструктор, что бы не делать реальный объект из Qt при наследовании
+	} /// спец Конструктор, чтобы не делать реальный объект из Qt при наследовании
 	this(QObject parent) {
 		super();
 		if (parent) {
@@ -1234,17 +1234,17 @@ class QAction: QObject  {
 +/		
 class QMenuBar: gWidget {
 	this(gWidget parent) {
-		super();  //  Это заглушка, что бы наследовать D класс не создавая экземпляра в Qt C++
+		super();  //  Это заглушка, чтобы наследовать D класс не создавая экземпляра в Qt C++
 		if (parent) {
 			p_QObject = (cast(t_vp__vp)pFunQt[81])(parent.p_QObject);
 		}
 		else {
 			p_QObject = (cast(t_vp__vp)pFunQt[81])(null);
 		}
-	} /// Конструктор, где parent - сылка на родительский виджет
+	} /// Конструктор, где parent - ссылка на родительский виджет
 	void addMenu(QMenu menu) {
 		(cast(t_v__vp_vp)pFunQt[82])(p_QObject, cast(void*)menu.QtObj);
-	} /// Вставить мертикальное меню 
+	} /// Вставить вертикальное меню 
 }
 // ============ QMenu =======================================
 /++
@@ -1252,17 +1252,17 @@ class QMenuBar: gWidget {
 +/		
 class QMenu: gWidget {
 	this(gWidget parent) {
-		super();  //  Это заглушка, что бы наследовать D класс не создавая экземпляра в Qt C++
+		super();  //  Это заглушка, чтобы наследовать D класс не создавая экземпляра в Qt C++
 		if (parent) {
 			p_QObject = (cast(t_vp__vp)pFunQt[83])(parent.p_QObject);
 		}
 		else {
 			p_QObject = (cast(t_vp__vp)pFunQt[83])(null);
 		}
-	} /// Конструктор, где parent - сылка на родительский виджет
+	} /// Конструктор, где parent - ссылка на родительский виджет
 	void addAction(QAction act) {
 		(cast(t_v__vp_vp)pFunQt[84])(p_QObject, cast(void*)act.QtObj);
-	} /// Вставить мертикальное меню 
+	} /// Вставить вертикальное меню 
 	void addSeparator() {
 		(cast(t_v__vp)pFunQt[85])(p_QObject);
 	} /// Добавить сепаратор 
@@ -1273,14 +1273,14 @@ class QMenu: gWidget {
 // ============ QWebView =======================================
 class QWebView: gWidget {
 	this(gWidget parent) {
-		super();  //  Это заглушка, что бы наследовать D класс не создавая экземпляра в Qt C++
+		super();  //  Это заглушка, чтобы наследовать D класс не создавая экземпляра в Qt C++
 		if (parent) {
 			p_QObject = (cast(t_vp__vp)pFunQt[88])(parent.p_QObject);
 		}
 		else {
 			p_QObject = (cast(t_vp__vp)pFunQt[88])(null);
 		}
-	} /// Конструктор, где parent - сылка на родительский виджет
+	} /// Конструктор, где parent - ссылка на родительский виджет
 	void load(QUrl url) {
 		(cast(t_v__vp_vp)pFunQt[91])(p_QObject, cast(void*)url.QtObj);
 	} /// Добавить сепаратор 
