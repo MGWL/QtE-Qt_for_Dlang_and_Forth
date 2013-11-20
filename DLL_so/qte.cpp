@@ -1,5 +1,5 @@
 // +----------------------------------------------------------------+
-// | Проект QtE (wrapping QT for SPF and D)                               |
+// | Проект QtE (wrapping QT for SPF and D)                         |
 // | MGW,  22.07.13 14:12                                           |
 // +----------------------------------------------------------------+
 
@@ -15,9 +15,9 @@ extern "C" int QApplication_exec()
 {
     return (int) QApplication::exec();
 }
-extern "C" void* QApplication_create(int* argc, char** argv, bool GUIenabled)
+extern "C" void* QApplication_create(int argc, char** argv, bool GUIenabled)
 {
-    return (void*) new QApplication(*(int*)argc, argv, GUIenabled);
+    return (void*) new QApplication(argc, argv, GUIenabled);
 }
 // --------- Lazarus ---------
 // Фигня...  В Linux не работае, ошибка сегментации.
@@ -76,8 +76,8 @@ extern "C" void QT_QTextCodec_fromUnicode(QTextCodec *codec, QString *qstr, char
 }
 
 // ================= QWidget =================
-extern "C" QWidget* p_QWidget(QWidget* parent, Qt::WindowFlags f) {
-    return new QWidget(parent);
+extern "C" void* p_QWidget(QWidget* parent, Qt::WindowFlags f) {
+    return new eQWidget(parent);
 }
 extern "C" void resize_QWidget(QWidget* wid, int w, int h) {
     wid->resize(w, h);
@@ -87,6 +87,14 @@ eQWidget::eQWidget( QWidget* parent): QWidget( parent ) {
 }
 eQWidget::~eQWidget()
 {
+}
+extern "C" void setCloseEvent( eQWidget* wid, void* adr )
+{
+    wid->aCloseEvent = adr;
+}
+void eQWidget::closeEvent(QCloseEvent *event)
+{
+    if (aCloseEvent!= NULL) ((ExecZIM_1_0)aCloseEvent)((void *)event);
 }
 extern "C" void setResizeEvent( eQWidget* wid, void* adr )
 {
@@ -98,6 +106,9 @@ void eQWidget::resizeEvent( QResizeEvent *a )
 }
 extern "C" eQWidget* p_eQWidget(QWidget* parent) {
     return new eQWidget(parent);
+}
+extern "C" void p_eQWidget_del(eQWidget* parent) {
+    delete parent;
 }
 extern "C" int size_eQWidget(void) {
     return sizeof(QString);
@@ -141,6 +152,12 @@ extern "C" void QT_QString_text(QString *qstr, char *strz) {
 extern "C" QByteArray* new_QByteArray(void) {
     return new QByteArray();
 }
+extern "C" QChar* QString_data(QString *s) {
+    return s->data();
+}
+extern "C" int QString_size(QString *s) {
+    return s->size();
+}
 // ==================== QTextEdit ======================
 extern "C" void *p_QTextEdit(QWidget* parent) {
         return  new QTextEdit(parent);
@@ -164,7 +181,15 @@ void eSlot::Slot0()
 {
     if (aSlot0 != NULL)  ((ExecZIM_0_0)aSlot0)();
 }
-void eSlot::Slot1_int(int par1)
+void eSlot::Slot1(bool par1)
+{
+    if (aSlot1 != NULL) ((ExecZIM_1_0)aSlot1)((void*)par1);
+}
+void eSlot::Slot1(int par1)
+{
+    if (aSlot1 != NULL) ((ExecZIM_v__i)aSlot1)(par1);
+}
+void eSlot::Slot1_int(size_t par1)
 {
     if (aSlot1 != NULL) ((ExecZIM_1_0)aSlot1)((void*)par1);
 }
@@ -177,6 +202,10 @@ void eSlot::sendSignal1(void* par1) {
 
 extern "C" void* qte_eSlot(QObject * parent) {
      return new eSlot(parent);
+}
+extern "C" void eSlot_setSlot(size_t n, eSlot* slot, void* adr) {
+    if (n==0) slot->aSlot0 = adr;
+    if (n==1) slot->aSlot1 = adr;
 }
 extern "C" void eSlot_setSlot0(eSlot* slot, void* adr) {
      slot->aSlot0 = adr;
@@ -221,13 +250,39 @@ extern "C" void QT_QBoxLayout_addLayout(QBoxLayout *BoxLyout, QLayout *layout)
      BoxLyout->addLayout(layout);
 }
 // ===================== QMainWindow =====================
+eQMainWindow::eQMainWindow(QWidget* parent = 0, Qt::WindowFlags flags = 0 ): QMainWindow(parent, flags) {
+    aOnResize = NULL;
+    aCloseEvent = NULL;
+}
+eQMainWindow::~eQMainWindow()
+{
+}
 extern "C" void* QT_QMainWindow(void)
 {
-     return new QMainWindow();
+     return new eQMainWindow();
 }
-extern "C" void QT_QMainWindow_setMenuBar(QMainWindow *mw, QMenuBar *sb)
+extern "C"  void QMainWindowDel(eQMainWindow* parent) {
+    delete parent;
+}
+extern "C" void QT_QMainWindow_setMenuBar(eQMainWindow *mw, QMenuBar *sb)
 {
      mw->setMenuBar(sb);
+}
+extern "C" void QMainWindow_setCloseEvent( eQMainWindow* wid, void* adr )
+{
+    wid->aCloseEvent = adr;
+}
+void eQMainWindow::closeEvent(QCloseEvent *event)
+{
+    if (aCloseEvent!= NULL) ((ExecZIM_1_0)aCloseEvent)((void *)event);
+}
+extern "C" void QMainWindow_setResizeEvent( eQMainWindow* wid, void* adr )
+{
+    wid->aOnResize = adr;
+}
+void eQMainWindow::resizeEvent( QResizeEvent *a )
+{
+    if (aOnResize!= NULL) ((ExecZIM_1_0)aOnResize)((void *)a);
 }
 // ===================== StatusBar =====================
 extern "C" void* QT_QStatusBar(QWidget* parent)
@@ -243,6 +298,9 @@ extern "C" void* QT_QLCDNumber(QWidget* parent)
 extern "C" void* QT_QSpinBox(QWidget* parent)
 {
        return new QSpinBox(parent);
+}
+extern "C"  void QT_QSpinBoxDel(QSpinBox* parent) {
+    delete parent;
 }
 // ===================== QPalette =====================
 extern "C" void* QT_QPalette(void)
@@ -267,7 +325,7 @@ extern "C" void QT_QApp_setPalette(QApplication* app, QPalette* pal)
 {
        app->setPalette(*pal);
 }
-// ===================== QApplication =====================
+// ===================== QScriptEngine =====================
 extern "C" void* QT_QScriptEngine(void)
 {
        return new QScriptEngine();
@@ -312,6 +370,12 @@ extern "C"  void *QT_QMenuBar(QWidget * parent) {
 extern "C"  void* QT_QWebView(QWidget * parent) {
      return new QWebView(parent);
 }
+extern "C"  int QT_QWebView_size(void) {
+    return sizeof(QWebView);
+}
+extern "C"  void QT_QWebViewDel(QWebView* parent) {
+    delete parent;
+}
 extern "C"  void QT_QWebView_load(QWebView* wv, QUrl* url) {
      wv->load(*url);
 }
@@ -319,4 +383,15 @@ extern "C"  void QT_QWebView_load(QWebView* wv, QUrl* url) {
 // ============ QUrl =======================================
 extern "C"  void *QT_QUrl() {
      return new QUrl();
+}
+extern "C" void QT_QUrl_setUrl(QUrl* url, QString *qstr) {
+    url->setUrl(*qstr);
+}
+// ============ QProgressBar =======================================
+extern "C"  void *QT_QProgressBar(QWidget * parent) {
+     return new QProgressBar(parent);
+}
+// ============ QCheckBox =======================================
+extern "C"  void *QT_QCheckBox(QWidget * parent) {
+     return new QCheckBox(parent);
 }
