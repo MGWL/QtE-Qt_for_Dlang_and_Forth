@@ -1,5 +1,5 @@
 // +----------------------------------------------------------------+
-// | Проект QtE (wrapping QT for SPF and D)                               |
+// | Проект QtE (wrapping QT for SPF and D)                         |
 // | MGW,  22.07.13 14:12                                           |
 // +----------------------------------------------------------------+
 
@@ -28,7 +28,7 @@
 #ifdef WINDOWSF
   #include "qte_global.h"
   #include <stdio.h>
-
+  #include <Qt>
   #include <QtGui\QApplication>
   #include <QtGui\QPushButton>
   #include <QtGui\QTextEdit>
@@ -43,7 +43,10 @@
   #include <QtGui\QMessageBox>
   #include <QtGui\QLayout>
   #include <QtGui\QMenu>
+  #include <QtGui\QCheckBox>
+  #include <QtGui\QAbstractButton>
   #include <QtGui\QMenuBar>
+  #include <QtGui\QProgressBar>
   #include <QtCore\QTextCodec>
   #include <QtScript>
   #include <QtWebKit\QWebView>
@@ -53,6 +56,7 @@
 
 typedef void (*ExecZIM_1_0)( void* );    //  определим  тип  для вызываемой функции
 typedef void (*ExecZIM_0_0)( void  );
+typedef void (*ExecZIM_v__i)( int );    //  определим  тип  для вызываемой функции
 
 class eSlot : public QObject
 {
@@ -66,7 +70,9 @@ public:
     void sendSignal1(void*);
 public slots:
     void Slot0();
-    void Slot1_int(int);
+    void Slot1(bool);
+    void Slot1(int);
+    void Slot1_int(size_t);
 signals:
     void Signal0();
     void Signal1(void*);
@@ -77,11 +83,24 @@ class eQWidget : public QWidget
     Q_OBJECT
 public:
     void* aOnResize;
-    eQWidget( QWidget* parent = 0 );
+    void* aCloseEvent;
+    eQWidget( QWidget* );
     ~eQWidget();
-    void resizeEvent( QResizeEvent *a );
+    void resizeEvent( QResizeEvent* );
+    void closeEvent(QCloseEvent*);
 };
-extern "C" eQWidget* p_eQWidget(QWidget*);
+
+class eQMainWindow : public QMainWindow
+{
+    Q_OBJECT
+public:
+    void* aOnResize;
+    void* aCloseEvent;
+    eQMainWindow(QWidget*, Qt::WindowFlags);
+    ~eQMainWindow();
+    void resizeEvent(QResizeEvent*);
+    void closeEvent(QCloseEvent*);
+};
 
 class eLineEdit : public QLineEdit
 {
