@@ -77,6 +77,7 @@ extern "C" void QT_QTextCodec_fromUnicode(QTextCodec *codec, QString *qstr, char
 
 // ================= QWidget =================
 extern "C" void* p_QWidget(QWidget* parent, Qt::WindowFlags f) {
+    // if (f == 0) {};
     return new eQWidget(parent);
 }
 extern "C" void resize_QWidget(QWidget* wid, int w, int h) {
@@ -96,6 +97,7 @@ void eQWidget::closeEvent(QCloseEvent *event)
 {
     if (aCloseEvent!= NULL) ((ExecZIM_1_0)aCloseEvent)((void *)event);
 }
+
 extern "C" void setResizeEvent( eQWidget* wid, void* adr )
 {
     wid->aOnResize = adr;
@@ -104,6 +106,8 @@ void eQWidget::resizeEvent( QResizeEvent *a )
 {
     if (aOnResize!= NULL) ((ExecZIM_1_0)aOnResize)((void *)a);
 }
+// -------------------->   void setCloseEvent( eQWidget* wid, void* adr )
+
 extern "C" eQWidget* p_eQWidget(QWidget* parent) {
     return new eQWidget(parent);
 }
@@ -152,12 +156,38 @@ extern "C" void QT_QString_text(QString *qstr, char *strz) {
 extern "C" QByteArray* new_QByteArray(void) {
     return new QByteArray();
 }
+extern "C" void delete_QByteArray(QByteArray* buf) {
+    delete buf;
+}
+extern "C" QByteArray* new_QByteArray_vc(char* buf) {
+    return new QByteArray(buf);
+}
+extern "C" char* new_QByteArray_data(QByteArray* buf) {
+    return buf->data();
+}
+extern "C" int QByteArray_size(QByteArray* s) {
+    return s->size();
+}
+extern "C" bool QByteArray_operator2r1(QByteArray* s1, QByteArray* s2) {
+    return *s1 == *s2;
+}
+extern "C" QByteArray* QByteArray_left(QByteArray* s1, QByteArray* z, int i) {
+    *z = s1->left(i);
+    return z;
+}
+extern "C" QByteArray* QByteArray_mid(QByteArray* s1, QByteArray* z, int pos, int len) {
+    *z = s1->mid(pos, len);
+    return z;
+}
+
+
 extern "C" QChar* QString_data(QString *s) {
     return s->data();
 }
 extern "C" int QString_size(QString *s) {
     return s->size();
 }
+
 // ==================== QTextEdit ======================
 extern "C" void *p_QTextEdit(QWidget* parent) {
         return  new QTextEdit(parent);
@@ -186,6 +216,10 @@ void eSlot::Slot1(bool par1)
     if (aSlot1 != NULL) ((ExecZIM_1_0)aSlot1)((void*)par1);
 }
 void eSlot::Slot1(int par1)
+{
+    if (aSlot1 != NULL) ((ExecZIM_v__i)aSlot1)(par1);
+}
+void eSlot::Slot1(QAbstractSocket::SocketError par1)
 {
     if (aSlot1 != NULL) ((ExecZIM_v__i)aSlot1)(par1);
 }
@@ -251,6 +285,7 @@ extern "C" void QT_QBoxLayout_addLayout(QBoxLayout *BoxLyout, QLayout *layout)
 }
 // ===================== QMainWindow =====================
 eQMainWindow::eQMainWindow(QWidget* parent = 0, Qt::WindowFlags flags = 0 ): QMainWindow(parent, flags) {
+// eQMainWindow::eQMainWindow(QWidget* parent = 0, Qt::WindowFlags flags = 0 ) {
     aOnResize = NULL;
     aCloseEvent = NULL;
 }
@@ -368,7 +403,7 @@ extern "C"  void *QT_QMenuBar(QWidget * parent) {
 }
 // ============ QWebView =======================================
 extern "C"  void* QT_QWebView(QWidget * parent) {
-     return new QWebView(parent);
+    return new QWebView(parent);
 }
 extern "C"  int QT_QWebView_size(void) {
     return sizeof(QWebView);
@@ -377,11 +412,17 @@ extern "C"  void QT_QWebViewDel(QWebView* parent) {
     delete parent;
 }
 extern "C"  void QT_QWebView_load(QWebView* wv, QUrl* url) {
-     wv->load(*url);
+    wv->load(*url);
 }
-
+// ============ QLabel =======================================
+extern "C"  void* QT_QLabel_new(QWidget * parent) {
+     return new QLabel(parent);
+}
+extern "C" void delete_QT_QLabel(QLabel* lb) {
+    delete lb;
+}
 // ============ QUrl =======================================
-extern "C"  void *QT_QUrl() {
+extern "C"  void* QT_QUrl() {
      return new QUrl();
 }
 extern "C" void QT_QUrl_setUrl(QUrl* url, QString *qstr) {
@@ -395,3 +436,79 @@ extern "C"  void *QT_QProgressBar(QWidget * parent) {
 extern "C"  void *QT_QCheckBox(QWidget * parent) {
      return new QCheckBox(parent);
 }
+// ============ QTcpSocket =======================================
+extern "C"  void *QT_QTcpSocket(QObject * parent) {
+     return new QTcpSocket(parent);
+}
+extern "C"  void QT_QTcpSocket_connectToHost(QTcpSocket* soket, QString* host,  quint16 port, QIODevice::OpenModeFlag openMode) {
+    soket->connectToHost(*host, port, openMode);
+}
+// ============ QIODevice =======================================
+extern "C"  qint64 QIODevice_readLine(QIODevice* dev, char* buf, qint64 size) {
+    return dev->readLine(buf, size);
+}
+extern "C"  qint64 QIODevice_write(QIODevice* dev, char* buf, qint64 size) {
+    return dev->write(buf, size);
+}
+extern "C"  void QIODevice_setTextModeEnabled(QIODevice* dev, bool mode) {
+    dev->setTextModeEnabled(mode);
+}
+// ============ QDataStream =======================================
+extern "C"  void *QT_QDataStream(void) {
+    // printf("\n ----- C++ QDataStream -------\n");
+    QDataStream* z;
+    QByteArray* ba;
+    char* buf = "ABC";
+    ba = new QByteArray();
+    z =  new QDataStream(ba, (QIODevice::OpenMode)3);
+    int r = z->writeRawData(buf, 3);
+    // printf("\n C++ QT_QDataStream.writeRawData r = %d \n", r);
+    // printf("\n ---------------------\n");
+    return z;
+}
+extern "C"  void* QT_QDataStream3(QByteArray* ba, int mode) {
+    return new QDataStream(ba, (QIODevice::OpenMode)mode);
+}
+extern "C"  int QT_QDataStream_ReadRawData(QDataStream* stream, char* s, int len) {
+     return stream->readRawData(s, len);
+}
+extern "C"  int QT_QDataStream_WriteRawData(QDataStream* stream, char* s, int len) {
+     return stream->writeRawData(s, len);
+}
+extern "C"  void QT_QDataStream_setVersion(QDataStream* stream, int ver) {
+     return stream->setVersion(ver);
+}
+
+
+// ============ ВНИМАНИЕ - эксперементльный и функции ========
+class CL1 {
+public:
+    int i;
+    int j;
+    CL1(void) {
+        i=3; j=5;
+    }
+};
+extern "C"  void* QT_newCL1(void) {
+     return new CL1();
+}
+extern "C"  int pr1(CL1 c) {
+    printf("\nWarning! C++ pr(CL) function &c.j = %p   c.j = %d", &c, c.j);
+    return c.j;
+}
+extern "C"  int pr2(CL1* c) {
+    printf("\nWarning! C++ pr(CL*) функция &c->j = %p   c->j = %d", &c, c->j);
+    return c->j;
+}
+extern "C"  void* pr3(CL1* c) {
+    CL1 z = *c;
+    printf("\nWarning! C++ pr(CL*) &z = %p   c.j = %d", &z, z.j);
+    return &z;
+}
+extern "C"  int pr4(const CL1& c) {
+    printf("\nWarning! C++ pr(CL*) &c = %p   c.j = %d", &c, c.j);
+    return c.j;
+}
+
+
+// ============================================================
