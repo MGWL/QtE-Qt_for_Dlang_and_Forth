@@ -23,11 +23,14 @@
   #include <QAction>
   #include <QtScript>
   #include <QWebView>
+  #include <QtNetwork/QTcpSocket>
+  // /usr/include/QtNetwork
 #endif
 
 #ifdef WINDOWSF
   #include "qte_global.h"
   #include <stdio.h>
+
   #include <Qt>
   #include <QtGui\QApplication>
   #include <QtGui\QPushButton>
@@ -47,9 +50,12 @@
   #include <QtGui\QAbstractButton>
   #include <QtGui\QMenuBar>
   #include <QtGui\QProgressBar>
+  #include <QtGui\QLabel>
   #include <QtCore\QTextCodec>
   #include <QtScript>
   #include <QtWebKit\QWebView>
+  #include <QtNetwork\QTcpSocket>
+  #include <QtNetwork\QAbstractSocket>
 #endif
 
 #define FQT_API QTESHARED_EXPORT
@@ -72,6 +78,7 @@ public slots:
     void Slot0();
     void Slot1(bool);
     void Slot1(int);
+    void Slot1(QAbstractSocket::SocketError);
     void Slot1_int(size_t);
 signals:
     void Signal0();
@@ -102,6 +109,7 @@ public:
     void closeEvent(QCloseEvent*);
 };
 
+
 class eLineEdit : public QLineEdit
 {
     Q_OBJECT
@@ -123,7 +131,6 @@ public:
 public slots:
         void OnClick();
 };
-
 #endif // QTE_H
 
 
