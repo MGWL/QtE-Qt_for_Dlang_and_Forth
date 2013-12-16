@@ -1,6 +1,8 @@
 QtE
 ===
 
+Qt gui library for Dlang (dmd D2).
+
 Qt wrapper for the D language (dmd D2 dlang) and Forth (SPF-4.20) language.
 
 This works in Windows 32 and Linux 32 / 64 
