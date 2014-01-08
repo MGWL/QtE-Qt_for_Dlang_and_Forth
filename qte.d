@@ -54,7 +54,8 @@ version(linux) {
 }
 
 int verQtEu = 1;
-int verQtEl = 1;  // ver 1.1  64 разрядов на Linux
+int verQtEl = 2;  // ver 1.1  64 разрядов на Linux
+                  // ver 1.2  изменен eSlot + хранение ID (N) 
 
 enum dll {
         Core = 0x1, Gui = 0x2, QtE = 0x4, Script = 0x8, Web = 0x16, Net = 0x32
@@ -80,6 +81,7 @@ private extern (C) alias void  function(void*, int)                         t_v_
 private extern (C) alias void  function(void*, void*, void*)   				t_v__vp_vp_vp;
 private extern (C) alias void  function(void*, int, int)     		        t_v__vp_i_i;
 private extern (C) alias void  function(void*, void*, int, int)     		t_v__vp_vp_i_i;
+private extern (C) alias void  function(void*, void*, int)          		t_v__vp_vp_i;
 private extern (C) alias int   function(void*, void*, void*)   				t_i__vp_vp_vp;
 private extern (C) alias void* function(void*, void*) 	    				t_vp__vp_vp;
 private extern (C) alias void* function(void*, char,  int)                  t_vp__vp_c_i;
@@ -121,6 +123,12 @@ private extern (C) alias void* function(void*, void*, void*)                 t_v
 
 private extern (C) alias long function(void*, void*, long)                   t_l__vp_vp_l;
 private extern (C) alias long function(void*)                                t_l__vp;
+
+private extern (C) alias void* function(void*, void*, void*, void*, void*, void*, void*) t_vp__vp_vp_vp_vp_vp_vp_vp;
+private extern (C) alias void* function(void*, void*, void*, void*, void*, void*, void*, void*) t_vp__vp_vp_vp_vp_vp_vp_vp_vp;
+
+//    void* getOpenFileName(QWidget parent = null, QString caption = null, 
+//        QString dir = null, QString filter = null, QString selectedFilter = null, options = 0) {
 
 // QApplication
 private extern (C) alias void  function(void*, int*, char**)  	t_QApplication_QApplication; 
@@ -528,6 +536,32 @@ int LoadQt(dll ldll, bool showError) {   ///  Загрузить DLL-ки Qt и 
     pFunQt[166] = GetPrAddres(bGui, hQtGui,   "_ZN6QFrame14setFrameShadowENS_6ShadowE"); if (!pFunQt[166]) MessageErrorLoad(showError, "QFrame::setFrameShadow(QFrame::Shadow)"w, 2);
     pFunQt[167] = GetPrAddres(bGui, hQtGui,   "_ZN7QWidget14setMaximumSizeEii"); if (!pFunQt[167]) MessageErrorLoad(showError, "QWidget::setMaximumSize(int, int)"w, 2);
     pFunQt[168] = GetPrAddres(bGui, hQtGui,   "_ZN6QLabel12setAlignmentEi"); if (!pFunQt[168]) MessageErrorLoad(showError, "setAlignment(QFlags<Qt::AlignmentFlag>)"w, 2);
+
+    pFunQt[169] = GetPrAddres(bQtE, hQtE,    "QT_QObject_parent"); if (!pFunQt[169]) MessageErrorLoad(showError, "QObject::parent"w, 2);
+
+	pFunQt[170] = GetPrAddres(bQtE, hQtE, "eSlot_setSlotN"); if (!pFunQt[170]) MessageErrorLoad(showError, "eSlot_setSlotN"w, 2);
+    pFunQt[171] = GetPrAddres(bGui, hQtGui, "_ZN7QWidget10setEnabledEb"); if (!pFunQt[171]) MessageErrorLoad(showError, "QWidget::setEnabled(bool)"w, 2);
+// ============ setToolTip =======================================
+    pFunQt[172] = GetPrAddres(bGui, hQtGui, "_ZN7QWidget10setToolTipERK7QString"); if (!pFunQt[172]) MessageErrorLoad(showError, "QWidget::setToolTip(QString const&)"w, 2);
+    pFunQt[173] = GetPrAddres(bGui, hQtGui, "_ZN7QAction10setToolTipERK7QString"); if (!pFunQt[173]) MessageErrorLoad(showError, "QAction::setToolTip(QString const&)"w, 2);
+// ============ QGroupBox =======================================
+    pFunQt[174] = GetPrAddres(bQtE, hQtE, "p_QGroupBox"); if (!pFunQt[174]) MessageErrorLoad(showError, "QGroupBox::p_QGroupBox()"w, 2);
+    pFunQt[175] = GetPrAddres(bGui, hQtGui, "_ZN9QGroupBox8setTitleERK7QString"); if (!pFunQt[175]) MessageErrorLoad(showError, "QGroupBox::setTitle(QString const&)"w, 2);
+  // QRadioButton
+    pFunQt[176] = GetPrAddres(bQtE, hQtE, "QT_QRadioButton"); if (!pFunQt[176]) MessageErrorLoad(showError, "QT_QRadioButton::QT_QRadioButton"w, 2);
+// ============ QBoxlayout =======================================
+    pFunQt[177] = GetPrAddres(bGui, hQtGui, "_ZN10QBoxLayout10addSpacingEi"); if (!pFunQt[177]) MessageErrorLoad(showError, "QBoxLayout::addSpacing(int)"w, 2);
+    pFunQt[178] = GetPrAddres(bGui, hQtGui, "_ZN10QBoxLayout10addStretchEi"); if (!pFunQt[178]) MessageErrorLoad(showError, "QBoxLayout::addStretch(int)"w, 2);
+    pFunQt[179] = GetPrAddres(bGui, hQtGui, "_ZN10QBoxLayout8addStrutEi"); if (!pFunQt[179]) MessageErrorLoad(showError, "QBoxLayout::addStrut(int)"w, 2);
+// ============ Эксперементальный класс DQByteArray == Работа с объектом С++ без компилятора ===============
+    pFunQt[180] = GetPrAddres(bCore, hQtCore, "_ZN10QByteArrayC1EPKc"); if (!pFunQt[180]) MessageErrorLoad(showError, "QByteArray::QByteArray(char const*)"w, 2);
+// ============ QString + QFileDialog ===============
+    pFunQt[181] = GetPrAddres(bQtE, hQtE, "del_QString"); if (!pFunQt[181]) MessageErrorLoad(showError, "delete QString"w, 2);
+    pFunQt[182] = GetPrAddres(bQtE, hQtE, "QT_QFileDialog"); if (!pFunQt[182]) MessageErrorLoad(showError, "QT_QFileDialog"w, 2);
+    pFunQt[183] = GetPrAddres(bQtE, hQtE, "QT_QFileDialogDELETE"); if (!pFunQt[183]) MessageErrorLoad(showError, "delete QFileDialog"w, 2);
+    pFunQt[184] = GetPrAddres(bGui, hQtGui, "_ZN11QFileDialog15getOpenFileNameEP7QWidgetRK7QStringS4_S4_PS2_6QFlagsINS_6OptionEE"); if (!pFunQt[184]) 
+        MessageErrorLoad(showError, "QFileDialog::getOpenFileName(QWidget*, QString const&, QString const&, QString const&, QString*, QFlags<QFileDialog::Option>)"w, 2);
+    pFunQt[185] = GetPrAddres(bQtE, hQtE, "QT_QFileDialog_getOpenFileName"); if (!pFunQt[185]) MessageErrorLoad(showError, "QT_QFileDialog_getOpenFileName"w, 2);
     
     return 0;
 } ///  Загрузить DLL-ки Qt и QtE. Найти в них адреса функций и заполнить ими таблицу
@@ -818,6 +852,9 @@ class QObject {
 	void connect (void*  obj1, char* ssignal, void* obj2, char* sslot, int type) {
 		(cast(t_QObject_connect)pFunQt[27])(obj1, ssignal, obj2, sslot, type);
 	}
+	void* parent() {
+        return (cast(t_vp__vp)pFunQt[169])(p_QObject);
+	} /// Вернуть из C++ реального родителя
 }
 // ================ QTextCodec ==================
 /++
@@ -917,11 +954,16 @@ class QFrame: QObject {
 	для реакции на события.
 +/		
 class gWidget: QFrame  {
+    void del() {
+        if (p_QObject) {
+            (cast(t_v__vp)pFunQt[93])(p_QObject);
+            p_QObject = null;
+        }
+    }
    ~this() {
-//        if (p_QObject) {
-//            writeln("CALL (01) from  Delete gWidget = ", p_QObject);
-//            // (cast(t_v__vp)pFunQt[93])(p_QObject); p_QObject = null;
-//        }
+        if (p_QObject) {
+             p_QObject = null;
+        }
      }
 	this(gWidget parent, int fl) {
 		super();
@@ -933,6 +975,7 @@ class gWidget: QFrame  {
 		else {
 			p_QObject = (cast(t_p_QWidget)pFunQt[12])(null, fl);
 		}
+  //      writeln("gWidget this() parent = ", this.parent(), "  myParent = ", p_QObject);
         // writeln("CALL      from  Ctrate gWidget = ", p_QObject);
 	}  /// Конструктор
 	this() {	
@@ -975,13 +1018,19 @@ class gWidget: QFrame  {
 	} /++ Установить обработчик на событие CloseEvent. Здесь <u>adr</u> - адрес на функцию D +/
 	void setStyleSheet(QString str) {
         (cast(t_v__vp_vp)pFunQt[118])(p_QObject, cast(GetObjQt_t)str.QtObj);
-	}
+	} /// При помощи строки задать описание эл. Цвет и т.д.
 	void setMinimumSize(int w, int h) {
         (cast(t_v__vp_i_i)pFunQt[124])(p_QObject, w, h);
-	}
+	} /// Минимальный размер в лайоутах
     void setMaximumSize(int w, int h) {
         (cast(t_v__vp_i_i)pFunQt[167])(p_QObject, w, h);
-    }
+    } /// Максимальный размер в лайоутах
+    void setEnabled(bool fl) {
+        (cast(t_v__vp_bool)pFunQt[171])(QtObj, fl);
+    } /// Доступен или нет
+    void setToolTip(QString str) {
+        (cast(t_v__vp_vp)pFunQt[172])(QtObj, str.QtObj);
+    } /// Добавить строку всплывающей подсказки
 }
 // ================ QByteArray ================
 class QByteArray: QObject {
@@ -1121,6 +1170,9 @@ class QString: QObject {
 	this(wstring s) {
 		p_QObject = (cast(t_QString_wchar)pFunQt[18])(cast(wchar*)s, s.length);
 	} /// Конструктор где s - unicod. Пример: QString qs = new QString("Привет!"w);
+   ~this() {
+        (cast(t_v__vp)pFunQt[181])(p_QObject);
+    }
 	void clear() {
 		(cast(t_QString_clear)pFunQt[11])(p_QObject);
 	} /// Очистить строку
@@ -1263,6 +1315,12 @@ class gSlot: QObject  {
 		super();
 		p_QObject = (cast(t_gSlot)pFunQt[28])(null);
 	}
+	// Слот с параметром. При установке setSlotN устанавливается адрес callback и параметр n
+	// который будет возвращен при срабатывании слота и позволит идентифицировать того, кто
+	// вызвал callback
+	void setSlotN(void* adr, long n) {
+		(cast(t_v__vp_vp_i)pFunQt[170])(p_QObject, adr, cast(int)n);
+	} /// Установить адрес функции D в слот n
 	void setSlot(int n, void* adr) {
 		(cast(t_v__i_vp_vp)pFunQt[94])(n, p_QObject, adr);
 	} /// Установить адрес функции D в слот n
@@ -1406,6 +1464,15 @@ class QBoxLayout: QObject  {
 	void setSpacing(int mar) {
 		(cast(t_v__vp_vp)pFunQt[117])(p_QObject, cast(void*)mar);
 	}
+	void addSpacing(int mar) {
+		(cast(t_v__vp_vp)pFunQt[177])(p_QObject, cast(void*)mar);
+	}  /// фиксированный отступ
+	void addStretch(int mar) {
+		(cast(t_v__vp_vp)pFunQt[178])(p_QObject, cast(void*)mar);
+	} /// Распорка
+	void addStrut(int mar) {
+		(cast(t_v__vp_vp)pFunQt[179])(p_QObject, cast(void*)mar);
+	}
 }
 class QVBoxLayout: QBoxLayout  {
 	this() {
@@ -1427,8 +1494,11 @@ class QMainWindow: gWidget {
 	this() {
 		super();  //  Это заглушка, что бы наследовать D класс не создавая экземпляра в Qt C++
 		p_QObject = (cast(t_vp__v)pFunQt[54])();
+//       writeln("QMainWindow this() parent = ", parent(), "  myParent = ", p_QObject);
 	} /// Конструктор основного окна приложения
     ~this() {
+ //      writeln("QMainWindow ~this() parent = ", parent(), "  myParent = ", p_QObject);
+       p_QObject = null;
     }       
 	void setStatusBar(QStatusBar sb) {
 		(cast(t_v__vp_vp)pFunQt[52])(p_QObject, sb.QtObj);
@@ -1586,6 +1656,9 @@ class QAction: QObject  {
 	void onClick(void* adr) {
 		(cast(t_v__vp_vp)pFunQt[80])(p_QObject, adr);
 	} /// Учтановить функцию обработки этого действия 
+    void setToolTip(QString str) {
+        (cast(t_v__vp_vp)pFunQt[173])(QtObj, str.QtObj);
+    } /// Добавить строку всплывающей подсказки
 }
 // ============ QMenuBar =======================================
 /++
@@ -1729,6 +1802,23 @@ class QCheckBox: QAbstractButton {
         }
         else {
             p_QObject = (cast(t_vp__vp)pFunQt[114])(null);
+        }
+    } /// Конструктор, где parent - сылка на родительский виджет
+    ~this() {
+        if (p_QObject) {
+            p_QObject = null;
+        }
+    }       
+}
+// ============ QRadioButton =======================================
+class QRadioButton: QAbstractButton {
+    this(gWidget parent) {
+        super(parent);
+        if (parent) {
+            p_QObject = (cast(t_vp__vp)pFunQt[176])(parent.p_QObject);
+        }
+        else {
+            p_QObject = (cast(t_vp__vp)pFunQt[176])(null);
         }
     } /// Конструктор, где parent - сылка на родительский виджет
     ~this() {
@@ -1915,4 +2005,93 @@ class QLabel: gWidget  {
     void setAlignment(QtE.AlignmentFlag fl) {
         (cast(t_v__vp_i)pFunQt[168])(QtObj, fl);
     } /// Выравнивание
+}
+// ============ QGroupBox =======================================
+class QGroupBox: gWidget  {
+    this(gWidget parent) {
+        super();  //  Это заглушка, что бы наследовать D класс не создавая экземпляра в Qt C++
+        if (parent) {
+            p_QObject = (cast(t_vp__vp)pFunQt[174])(parent.p_QObject);
+        }
+        else {
+            p_QObject = (cast(t_vp__vp)pFunQt[174])(null);
+        }
+    }
+    ~this() {
+       // (cast(t_v__vp)pFunQt[163])(QtObj);
+    }
+    void setTitle(QString str) {
+        (cast(t_v__vp_vp)pFunQt[175])(QtObj, str.QtObj);
+    } /// Установить заголовок
+}
+// ================ QFileDialog ================
+class QFileDialog: gWidget {
+    enum Option {
+        ShowDirsOnly = 0x00000001,
+        DontResolveSymlinks = 0x00000002,
+        DontConfirmOverwrite = 0x00000004,
+        DontUseNativeDialog = 0x00000010,
+        ReadOnly = 0x00000020,
+        HideNameFilterDetails = 0x00000040,
+        DontUseSheet = 0x00000008
+    }
+    this(gWidget parent) {
+        super();  //  Это заглушка, что бы наследовать D класс не создавая экземпляра в Qt C++
+        if (parent) {
+            p_QObject = (cast(t_vp__vp)pFunQt[182])(parent.p_QObject);
+        }
+        else {
+            p_QObject = (cast(t_vp__vp)pFunQt[182])(null);
+        }
+    }
+    ~this() {
+       // (cast(t_v__vp)pFunQt[183])(QtObj);
+    }
+    // Тяжкое наследие С++ Надо разобраться, почему валится на возвращаемом значении
+    void* getOpenFileNamePabic(gWidget parent = null, QString caption = null,
+            QString dir = null, QString filter = null, QString selectedFilter = null, int options = Option.DontUseNativeDialog) {
+        QString s2; QString s3; QString s4; QString s5; int o6 = Option.DontUseNativeDialog;
+        void* p1; if(parent)  { p1=parent.QtObj; }
+        void* p2; if(caption) { p2=caption.QtObj; } else { s2 = new QString(); p2 = s2.QtObj; }
+        void* p3; if(dir)     { p3=dir.QtObj; } else { s3 = new QString(); p3 = s3.QtObj; }
+        void* p4; if(filter)  { p4=filter.QtObj; } else { s4 = new QString(); p4 = s4.QtObj; } 
+        void* p5; if(selectedFilter) { p5=selectedFilter.QtObj; } else { s5 = new QString(); p5 = s5.QtObj; } 
+        o6 = options;
+        (cast(t_vp__vp_vp_vp_vp_vp_vp_vp)pFunQt[184])(QtObj, p1, p2, p3, p4, p5, &o6);
+        return null;
+    }
+    QString getOpenFileName(QString rez, gWidget parent = null, QString caption = null,
+            QString dir = null, QString filter = null, QString selectedFilter = null, 
+            int options = Option.DontUseNativeDialog ) {
+        QString s2; QString s3; QString s4; QString s5; int o6;
+        void* p1; if(parent)  { p1=parent.QtObj; }
+        void* p2; if(caption) { p2=caption.QtObj; } else { s2 = new QString(); p2 = s2.QtObj; }
+        void* p3; if(dir)     { p3=dir.QtObj; } else { s3 = new QString(); p3 = s3.QtObj; }
+        void* p4; if(filter)  { p4=filter.QtObj; } else { s4 = new QString(); p4 = s4.QtObj; } 
+        void* p5; if(selectedFilter) { p5=selectedFilter.QtObj; } else { s5 = new QString(); p5 = s5.QtObj; } 
+        o6 = options;
+        (cast(t_vp__vp_vp_vp_vp_vp_vp_vp_vp)pFunQt[185])(QtObj, p1, p2, p3, p4, p5, cast(void*)o6, rez.QtObj);
+        return rez;
+    }
+}
+// ============ Эксперементальный класс DQByteArray == Работа с объектом С++ без компилятора ===============
+class DQByteArray {
+    size_t QtObj;       // Сам объект
+    this(immutable(char)* buf) {
+        (cast(t_v__vp_vp)pFunQt[180])(cast(void*)&QtObj, cast(void*)buf);
+    }
+    void v() {
+        writeln(QtObj);
+    }
+	ubyte* data() {
+		return (cast(t_QByteArray_data)pFunQt[17])(cast(void*)&QtObj);
+	}
+	// Забить массив символом ch и если указан resize изменить размер
+	void* fill(char ch, int resize=-1) {
+        return (cast(t_vp__vp_c_i)pFunQt[143])(cast(void*)&QtObj, ch, resize);
+	}
+//    void opAssign(DQByteArray ba)    {
+//        (cast(t_vp__vp_vp)pFunQt[148])(cast(void*)&QtObj, &ba.QtObj);
+//    }
+    // QByteArray::operator=(QByteArray const&)
 }
