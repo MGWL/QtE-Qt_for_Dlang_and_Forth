@@ -125,6 +125,9 @@ extern "C" QString* qs_test(void) {
 extern "C" QString* new_QString(void) {
     return new QString();
 }
+extern "C" void del_QString(QString* s) {
+    delete s;
+}
 // QString из wchar
 extern "C" QString* new_QString_wchar(QChar* s, int size) {
     return new QString(s, size);
@@ -200,12 +203,24 @@ extern "C" void *QT_QPushButton(QWidget* parent, QString name) {
 extern "C" void* QT_QObject(QObject * parent) {
      return new QObject(parent);
 }
+extern "C" void* QT_QObject_parent(QObject* obj) {
+     return obj->parent();
+}
+
 // ==================== eSlot ======================
 eSlot::eSlot(QObject* parent) : QObject(parent)
 {
+    aSlot0 = NULL;
+    aSlot1 = NULL;
+    aSlotN = NULL;
+         N = 0;      
 }
 eSlot::~eSlot()
 {
+}
+void eSlot::SlotN() // Вызвать глобальную функцию с параметром N (диспетчерезатор) 
+{
+    if (aSlotN != NULL)  ((ExecZIM_v__i)aSlotN)(N);
 }
 void eSlot::Slot0()
 {
@@ -240,6 +255,10 @@ extern "C" void* qte_eSlot(QObject * parent) {
 extern "C" void eSlot_setSlot(size_t n, eSlot* slot, void* adr) {
     if (n==0) slot->aSlot0 = adr;
     if (n==1) slot->aSlot1 = adr;
+}
+extern "C" void eSlot_setSlotN(eSlot* slot, void* adr, int n) {
+    slot->aSlotN = adr;
+    slot->N = n;
 }
 extern "C" void eSlot_setSlot0(eSlot* slot, void* adr) {
      slot->aSlot0 = adr;
@@ -479,6 +498,63 @@ extern "C"  void QT_QDataStream_setVersion(QDataStream* stream, int ver) {
      return stream->setVersion(ver);
 }
 
+// ===================================================
+typedef QList<void *> gQList;
+
+extern "C" void* QT_QList() {
+        return  new gQList();
+}
+extern "C" void* QT_QListDELETE(gQList *pm) {
+    delete pm;
+    return NULL;
+}
+extern "C" void* QT_QList_append(gQList *pm, void *element) {
+        pm->append(element);
+        return  NULL;
+}
+
+extern "C" void* QT_QList_at(gQList *pm, int nomer) {
+        return  pm->at(nomer);
+}
+extern "C" void* QT_QList_clear(gQList *pm) {
+        pm->clear();
+        return NULL;
+}
+extern "C" void* QT_QList_size(gQList *pm) {
+        return (void *)pm->size();
+}
+extern "C" void* QT_QList_removeAt(gQList *pm, int nomer) {
+        pm->removeAt(nomer);
+        return NULL;
+}
+// ==================== QGroupBox ======================
+extern "C" void *p_QGroupBox(QWidget* parent) {
+        return  new QGroupBox(parent);
+}
+
+// ============ QRadioButton =======================================
+extern "C"  void *QT_QRadioButton(QWidget * parent) {
+     return new QRadioButton(parent);
+}
+
+// ============== QFileDialog ================
+extern "C" void* QT_QFileDialog(QWidget* parent) {
+    return  new QFileDialog(parent);
+}
+extern "C" void QT_QFileDialogDELETE(QFileDialog *pm) {
+    delete pm;
+}
+extern "C" QString* QT_QFileDialog_getOpenFileName(QFileDialog *pm,
+                                                QWidget *parent,
+                                                QString *caption, 
+                                                QString *dir, 
+                                                QString *filter,
+                                                QString *Selectedfilter, 
+                                                QFileDialog::Option options,
+                                                QString *rez) {
+    *rez =  pm->getOpenFileName(parent, *caption, *dir, *filter, Selectedfilter, options);
+    return rez;
+}
 
 // ============ ВНИМАНИЕ - эксперементльный и функции ========
 class CL1 {
