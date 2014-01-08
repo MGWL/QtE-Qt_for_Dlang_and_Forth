@@ -3,8 +3,8 @@
  ---------------------------------
  Пример работы с библиотекой QtE.d
  -------------------------------*/
-// win: dmd main.d lib_qt.d -L/SUBSYSTEM:WINDOWS:5.01
-// lin: dmd main.d lib_qt.d -L-ldl
+// win: dmd main.d qte.d -L/SUBSYSTEM:WINDOWS:5.01
+// lin: dmd main.d qte.d -L-ldl
 
 //  import std.c.stdio;
 import qte;                                   // Работа с Qt
