@@ -1,5 +1,5 @@
 // +----------------------------------------------------------------+
-// | Проект QtE (wrapping QT for SPF and D)                         |
+// | Проект QtE (wrapping QT for SPF and D)                               |
 // | MGW,  22.07.13 14:12                                           |
 // +----------------------------------------------------------------+
 
@@ -24,7 +24,9 @@
   #include <QtScript>
   #include <QWebView>
   #include <QtNetwork/QTcpSocket>
-  // /usr/include/QtNetwork
+  #include <QList>
+  #include <QFileDialog>
+// /usr/include/QtNetwork
 #endif
 
 #ifdef WINDOWSF
@@ -46,11 +48,11 @@
   #include <QtGui\QMessageBox>
   #include <QtGui\QLayout>
   #include <QtGui\QMenu>
+  #include <QtGui\QLabel>
   #include <QtGui\QCheckBox>
   #include <QtGui\QAbstractButton>
   #include <QtGui\QMenuBar>
   #include <QtGui\QProgressBar>
-  #include <QtGui\QLabel>
   #include <QtCore\QTextCodec>
   #include <QtScript>
   #include <QtWebKit\QWebView>
@@ -70,11 +72,16 @@ class eSlot : public QObject
 public:
     void* aSlot0;       // Хранит адрес D функции
     void* aSlot1;       // Хранит адрес D функции
+    void* aSlotN;       // Хранит адрес D функции для вызова с параметром
+    int        N;       // параметр для aSlotN. Идея запомнить параметр при установке слота и выдать 
+                        // при срабатывании слота. А ля - диспечерезация
+    // -----------------------------------
     eSlot(QObject* parent = 0);
     ~eSlot();
     void sendSignal0();
     void sendSignal1(void*);
 public slots:
+    void SlotN();
     void Slot0();
     void Slot1(bool);
     void Slot1(int);
