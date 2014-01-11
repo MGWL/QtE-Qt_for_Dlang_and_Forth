@@ -13,4 +13,10 @@ QtE.d (D) or QtE.f (Forth), take all necessary methods and properties of Qt, ref
 created using QtE.DLL(so) in C++. This method allows reducing programming in C++ to a minimum, 
 making the QtE library.
 
+Compile Windows:
+  dmd XXX.d qte.d
+
+Compile Linux:
+  dmd XXX.d qte.d -L-ldl
+
 Home page: http://qte.ucoz.ru
