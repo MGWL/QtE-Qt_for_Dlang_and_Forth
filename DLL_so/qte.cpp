@@ -27,6 +27,7 @@ extern "C" void* QApplication_create(int argc, char** argv, bool GUIenabled)
 eLineEdit::eLineEdit(QWidget * parent) : QLineEdit(parent)
 {
         aReturnPressed = NULL;
+        aTextChanged = NULL;
 }
 eLineEdit::~eLineEdit()
 {
@@ -38,6 +39,13 @@ void eLineEdit::returnPressed1()
             ((ExecZIM_0_0)aReturnPressed)();
         }
 }
+void eLineEdit::sTextChanged(const QString& str)
+{
+        if (aTextChanged != NULL)
+        {
+            ((ExecZIM_0_0)aTextChanged)();
+        }
+}
 // !!! Выдать QLineEdit на стек
 extern "C" void *QT_QLineEdit(QWidget* parent) {
         return  new eLineEdit(parent);
@@ -45,7 +53,12 @@ extern "C" void *QT_QLineEdit(QWidget* parent) {
 // !!! Установить обработчик
 extern "C" void QT_QLineEdit_onreturnPressed(eLineEdit* qw, void *uk) {
     qw->aReturnPressed = uk;
-    qw->connect(qw, SIGNAL( returnPressed() ), qw, SLOT( returnPressed1()));
+    qw->connect(qw, SIGNAL(returnPressed()), qw, SLOT(returnPressed1()));
+}
+// !!! Установить обработчик
+extern "C" void QT_QLineEdit_TextChanged(eLineEdit* qw, void *uk) {
+    qw->aTextChanged = uk;
+    qw->connect(qw, SIGNAL(textChanged(const QString &)), qw, SLOT( sTextChanged(const QString &)));
 }
 // !!! Текст строки LineEdit в QString
 extern "C" void QT_QLineEdit_text(eLineEdit* qw, QString *qstr) {
@@ -74,7 +87,6 @@ extern "C" void QT_QTextCodec_toUnicode(QTextCodec *codec, QString *qstr, char *
 extern "C" void QT_QTextCodec_fromUnicode(QTextCodec *codec, QString *qstr, char *strz) {
     sprintf(strz, "%s", codec->fromUnicode(*qstr).data());
 }
-
 // ================= QWidget =================
 extern "C" void* p_QWidget(QWidget* parent, Qt::WindowFlags f) {
     // if (f == 0) {};
@@ -85,9 +97,22 @@ extern "C" void resize_QWidget(QWidget* wid, int w, int h) {
 }
 eQWidget::eQWidget( QWidget* parent): QWidget( parent ) {
     aOnResize = NULL;
+    aCloseEvent = NULL;
+    aPaintEvent = NULL;
 }
 eQWidget::~eQWidget()
 {
+}
+void eQWidget::paintEvent(QPaintEvent* event)
+{
+    if (aPaintEvent!= NULL) {
+        QPainter p(this);
+        ((ExecZIM_2_0)aPaintEvent)((void *)this, (void*)&p);
+    }
+}
+extern "C" void eQWidget_setPaintEvent( eQWidget* wid, void* adr )
+{
+    wid->aPaintEvent = adr;
 }
 extern "C" void setCloseEvent( eQWidget* wid, void* adr )
 {
@@ -116,6 +141,12 @@ extern "C" void p_eQWidget_del(eQWidget* parent) {
 }
 extern "C" int size_eQWidget(void) {
     return sizeof(QString);
+}
+extern "C" int width_eQWidget(QWidget* w) {
+    return w->width();
+}
+extern "C" int height_eQWidget(QWidget* w) {
+    return w->height();
 }
 // ?????????????????????????????????????????????????
 extern "C" QString* qs_test(void) {
@@ -213,12 +244,12 @@ eSlot::eSlot(QObject* parent) : QObject(parent)
     aSlot0 = NULL;
     aSlot1 = NULL;
     aSlotN = NULL;
-         N = 0;      
+         N = 0;
 }
 eSlot::~eSlot()
 {
 }
-void eSlot::SlotN() // Вызвать глобальную функцию с параметром N (диспетчерезатор) 
+void eSlot::SlotN() // Вызвать глобальную функцию с параметром N (диспетчерезатор)
 {
     if (aSlotN != NULL)  ((ExecZIM_v__i)aSlotN)(N);
 }
@@ -440,6 +471,9 @@ extern "C"  void* QT_QLabel_new(QWidget * parent) {
 extern "C" void delete_QT_QLabel(QLabel* lb) {
     delete lb;
 }
+extern "C" void QT_QLabel_text(QLabel* lb, QString* s) {
+    *s = lb->text();
+}
 // ============ QUrl =======================================
 extern "C"  void* QT_QUrl() {
      return new QUrl();
@@ -480,7 +514,8 @@ extern "C"  void *QT_QDataStream(void) {
     char* buf = "ABC";
     ba = new QByteArray();
     z =  new QDataStream(ba, (QIODevice::OpenMode)3);
-    int r = z->writeRawData(buf, 3);
+    // int r =
+            z->writeRawData(buf, 3);
     // printf("\n C++ QT_QDataStream.writeRawData r = %d \n", r);
     // printf("\n ---------------------\n");
     return z;
@@ -546,15 +581,75 @@ extern "C" void QT_QFileDialogDELETE(QFileDialog *pm) {
 }
 extern "C" QString* QT_QFileDialog_getOpenFileName(QFileDialog *pm,
                                                 QWidget *parent,
-                                                QString *caption, 
-                                                QString *dir, 
+                                                QString *caption,
+                                                QString *dir,
                                                 QString *filter,
-                                                QString *Selectedfilter, 
+                                                QString *Selectedfilter,
                                                 QFileDialog::Option options,
                                                 QString *rez) {
     *rez =  pm->getOpenFileName(parent, *caption, *dir, *filter, Selectedfilter, options);
     return rez;
 }
+// ============== QPainter ================
+extern "C" void* QT_QPainterNEW(QPaintDevice* device) {
+    return new QPainter(device);
+}
+extern "C" void QT_QPainterDELETE(QPainter* p) {
+    delete p;
+}
+extern "C" void QT_QPainter_drawLine(QPainter* p, int a, int b, int c, int d) {
+    p->drawLine(a, b, c, d);
+}
+extern "C" void QT_QPainter_begin(QPainter* p, QPaintDevice* dev) {
+    p->begin(dev);
+}
+extern "C" void QT_QPainter_end(QPainter* p) {
+    p->end();
+}
+extern "C" void QT_QPainter_drawText1(QPainter* p, QString* str, int x, int y) {
+    p->drawText(x, y, *str);
+}
+extern "C" void QT_QPainter_setFont(QPainter* p, QFont* str) {
+    p->setFont(*str);
+}
+// ================= QPrinter =================
+eQPrinter::eQPrinter(void): QPrinter() {
+}
+eQPrinter::~eQPrinter(void) {
+}
+void* eQPrinter::getThis(void) {
+    return (void*)this;
+}
+extern "C" void* QT_QPrinterNEW(QPrinter::PrinterMode mode) {
+    return new eQPrinter();
+}
+extern "C" void* QT_QPrinter_getThis(eQPrinter* pr) {
+    return pr->getThis();
+}
+// ================= QFont =================
+extern "C" void* QT_QFontNEW(void) {
+    return new QFont();
+}
+extern "C" void QT_QFontDELETE(QFont* p) {
+    delete p;
+}
+// ================= QDate =================
+extern "C" void* QT_QDateNEW(void) {
+    return new QDate();
+}
+extern "C" void QT_QDateDELETE(QDate* d) {
+    delete d;
+}
+extern "C" QDate* QT_QDate_currentDate(QDate* d) {
+    *d = d->currentDate();
+    return d;
+}
+// extern "C" QString* QT_QDate_toString(QDate* d, QString* rez, QString* shabl) {
+extern "C" void* QT_QDate_toString(QDate* d, QString* rez, QString* shabl) {
+     *rez = d->toString(*shabl);
+     return rez;
+}
+
 
 // ============ ВНИМАНИЕ - эксперементльный и функции ========
 class CL1 {
@@ -579,7 +674,7 @@ extern "C"  int pr2(CL1* c) {
 extern "C"  void* pr3(CL1* c) {
     CL1 z = *c;
     printf("\nWarning! C++ pr(CL*) &z = %p   c.j = %d", &z, z.j);
-    return &z;
+    return NULL; // &z;
 }
 extern "C"  int pr4(const CL1& c) {
     printf("\nWarning! C++ pr(CL*) &c = %p   c.j = %d", &c, c.j);
