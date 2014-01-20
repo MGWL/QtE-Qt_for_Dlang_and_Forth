@@ -22,7 +22,7 @@ static const uint qt_meta_data_eSlot[] = {
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-       4,   14, // methods
+       8,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -36,12 +36,18 @@ static const uint qt_meta_data_eSlot[] = {
  // slots: signature, parameters, type, tag, flags
       32,    6,    6,    6, 0x0a,
       40,    6,    6,    6, 0x0a,
+      48,    6,    6,    6, 0x0a,
+      60,    6,    6,    6, 0x0a,
+      71,    6,    6,    6, 0x0a,
+     107,    6,    6,    6, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_eSlot[] = {
-    "eSlot\0\0Signal0()\0Signal1(void*)\0Slot0()\0"
+    "eSlot\0\0Signal0()\0Signal1(void*)\0SlotN()\0"
+    "Slot0()\0Slot1(bool)\0Slot1(int)\0"
+    "Slot1(QAbstractSocket::SocketError)\0"
     "Slot1_int(size_t)\0"
 };
 
@@ -53,8 +59,12 @@ void eSlot::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void 
         switch (_id) {
         case 0: _t->Signal0(); break;
         case 1: _t->Signal1((*reinterpret_cast< void*(*)>(_a[1]))); break;
-        case 2: _t->Slot0(); break;
-        case 3: _t->Slot1_int((*reinterpret_cast< size_t(*)>(_a[1]))); break;
+        case 2: _t->SlotN(); break;
+        case 3: _t->Slot0(); break;
+        case 4: _t->Slot1((*reinterpret_cast< bool(*)>(_a[1]))); break;
+        case 5: _t->Slot1((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 6: _t->Slot1((*reinterpret_cast< QAbstractSocket::SocketError(*)>(_a[1]))); break;
+        case 7: _t->Slot1_int((*reinterpret_cast< size_t(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -92,9 +102,9 @@ int eSlot::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 4)
+        if (_id < 8)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 4;
+        _id -= 8;
     }
     return _id;
 }
@@ -172,13 +182,74 @@ int eQWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         return _id;
     return _id;
 }
+static const uint qt_meta_data_eQMainWindow[] = {
+
+ // content:
+       6,       // revision
+       0,       // classname
+       0,    0, // classinfo
+       0,    0, // methods
+       0,    0, // properties
+       0,    0, // enums/sets
+       0,    0, // constructors
+       0,       // flags
+       0,       // signalCount
+
+       0        // eod
+};
+
+static const char qt_meta_stringdata_eQMainWindow[] = {
+    "eQMainWindow\0"
+};
+
+void eQMainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+{
+    Q_UNUSED(_o);
+    Q_UNUSED(_id);
+    Q_UNUSED(_c);
+    Q_UNUSED(_a);
+}
+
+const QMetaObjectExtraData eQMainWindow::staticMetaObjectExtraData = {
+    0,  qt_static_metacall 
+};
+
+const QMetaObject eQMainWindow::staticMetaObject = {
+    { &QMainWindow::staticMetaObject, qt_meta_stringdata_eQMainWindow,
+      qt_meta_data_eQMainWindow, &staticMetaObjectExtraData }
+};
+
+#ifdef Q_NO_DATA_RELOCATION
+const QMetaObject &eQMainWindow::getStaticMetaObject() { return staticMetaObject; }
+#endif //Q_NO_DATA_RELOCATION
+
+const QMetaObject *eQMainWindow::metaObject() const
+{
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->metaObject : &staticMetaObject;
+}
+
+void *eQMainWindow::qt_metacast(const char *_clname)
+{
+    if (!_clname) return 0;
+    if (!strcmp(_clname, qt_meta_stringdata_eQMainWindow))
+        return static_cast<void*>(const_cast< eQMainWindow*>(this));
+    return QMainWindow::qt_metacast(_clname);
+}
+
+int eQMainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = QMainWindow::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    return _id;
+}
 static const uint qt_meta_data_eLineEdit[] = {
 
  // content:
        6,       // revision
        0,       // classname
        0,    0, // classinfo
-       1,   14, // methods
+       2,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -187,12 +258,14 @@ static const uint qt_meta_data_eLineEdit[] = {
 
  // slots: signature, parameters, type, tag, flags
       11,   10,   10,   10, 0x0a,
+      32,   28,   10,   10, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_eLineEdit[] = {
-    "eLineEdit\0\0returnPressed1()\0"
+    "eLineEdit\0\0returnPressed1()\0str\0"
+    "sTextChanged(QString)\0"
 };
 
 void eLineEdit::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -202,10 +275,10 @@ void eLineEdit::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
         eLineEdit *_t = static_cast<eLineEdit *>(_o);
         switch (_id) {
         case 0: _t->returnPressed1(); break;
+        case 1: _t->sTextChanged((*reinterpret_cast< const QString(*)>(_a[1]))); break;
         default: ;
         }
     }
-    Q_UNUSED(_a);
 }
 
 const QMetaObjectExtraData eLineEdit::staticMetaObjectExtraData = {
@@ -240,9 +313,9 @@ int eLineEdit::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 1)
+        if (_id < 2)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 1;
+        _id -= 2;
     }
     return _id;
 }
