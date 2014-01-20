@@ -8,9 +8,9 @@
 #define QTE_H
 
 // For compile in Windows define WINDOWF, disable LINUXF
-// #define WINDOWSF
+#define WINDOWSF
 // For compile in Linux define LINUXF, disable WINDOWF
-#define LINUXF
+// #define LINUXF
 
 #ifdef LINUXF
   #include <QApplication>
