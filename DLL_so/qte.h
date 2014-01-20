@@ -8,9 +8,9 @@
 #define QTE_H
 
 // For compile in Windows define WINDOWF, disable LINUXF
-#define WINDOWSF
+// #define WINDOWSF
 // For compile in Linux define LINUXF, disable WINDOWF
-// #define LINUXF
+#define LINUXF
 
 #ifdef LINUXF
   #include <QApplication>
@@ -52,7 +52,13 @@
   #include <QtGui\QCheckBox>
   #include <QtGui\QAbstractButton>
   #include <QtGui\QMenuBar>
+  #include <QtGui\QFileDialog>
   #include <QtGui\QProgressBar>
+  #include <QtGui\QGroupBox>
+  #include <QtGui\QRadioButton>
+  #include <QtGui\QPainter>
+  #include <QtGui\QPrinter>
+  #include <QtGui\QPaintEvent>
   #include <QtCore\QTextCodec>
   #include <QtScript>
   #include <QtWebKit\QWebView>
@@ -65,6 +71,7 @@
 typedef void (*ExecZIM_1_0)( void* );    //  определим  тип  для вызываемой функции
 typedef void (*ExecZIM_0_0)( void  );
 typedef void (*ExecZIM_v__i)( int );    //  определим  тип  для вызываемой функции
+typedef void (*ExecZIM_2_0)( void*, void* );    //  определим  тип  для вызываемой функции
 
 class eSlot : public QObject
 {
@@ -98,10 +105,21 @@ class eQWidget : public QWidget
 public:
     void* aOnResize;
     void* aCloseEvent;
+    void* aPaintEvent;
     eQWidget( QWidget* );
     ~eQWidget();
     void resizeEvent( QResizeEvent* );
     void closeEvent(QCloseEvent*);
+    void paintEvent(QPaintEvent*);
+};
+
+class eQPrinter : public QPrinter
+{
+    // Q_OBJECT
+public:
+    eQPrinter();
+    ~eQPrinter();
+    void* getThis();
 };
 
 class eQMainWindow : public QMainWindow
@@ -124,8 +142,10 @@ public:
         eLineEdit(QWidget * parent = 0);
         ~eLineEdit();
         void *aReturnPressed;
+        void *aTextChanged;
 public slots:
         void returnPressed1();
+        void sTextChanged(const QString& str);
 };
 
 class eAction : public QAction
