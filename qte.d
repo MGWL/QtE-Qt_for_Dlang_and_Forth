@@ -61,7 +61,7 @@ enum dll {
         Core = 0x1, Gui = 0x2, QtE = 0x4, Script = 0x8, Web = 0x16, Net = 0x32
     } /// Загрузка DLL. Необходимо выбрать какие грузить. Load DLL, we mast change load
 
-public void* pFunQt[200];   /// Масив указателей на функции из DLL
+public void* pFunQt[300];   /// Масив указателей на функции из DLL
 
 immutable int QMETHOD =  0;                        // member type codes
 immutable int QSLOT  = 1;
@@ -92,7 +92,10 @@ private extern (C) alias void  function(void*, QMessageBox.StandardButton) 	t_v_
 private extern (C) alias void  function(void*, QLCDNumber.SegmentStyle) 	t_v__vp_SegmentStyle;
 private extern (C) alias void* function() 									t_vp__v;
 private extern (C) alias void  function() 	                 				t_v__v;
+
 private extern (C) alias void* function(void*) 								t_vp__vp;
+private extern (C) alias const void* function(void*) 								t_c_vp__vp;
+
 private extern (C) alias void* function(void*, int) 						t_vp__vp_i;
 private extern (C) alias void* function(void*, int, int)                    t_vp__vp_i_i;
 private extern (C) alias void* function(void*, int, void*)                  t_vp__vp_i_vp;
@@ -219,6 +222,25 @@ static void msgbox(QByteArray text = null, QByteArray caption = null, QMessageBo
     }
     else {
         qs_str.set(cast(char*)(text.data()));    soob.setText(qs_str);
+    }
+    soob.setIcon(icon);
+    soob.setStandardButtons(QMessageBox.StandardButton.Ok);
+    soob.exec();
+}
+static void msgbox(QString text = null, QString caption = null, QMessageBox.Icon icon = QMessageBox.Icon.Information) {
+    QString qs_str = new QString(); qs_str.setNameCodec("UTF-8");
+    QMessageBox soob = new QMessageBox(null);
+    if (caption is null) {
+        qs_str.set(cast(char*)"Внимание!"); soob.setWindowTitle(qs_str);
+    }
+    else {
+        soob.setWindowTitle(caption);
+    }
+    if (text is null) {
+        qs_str.set(cast(char*)". . . . ."); soob.setText(qs_str);
+    }
+    else {
+        soob.setText(text);
     }
     soob.setIcon(icon);
     soob.setStandardButtons(QMessageBox.StandardButton.Ok);
@@ -562,7 +584,41 @@ int LoadQt(dll ldll, bool showError) {   ///  Загрузить DLL-ки Qt и 
     pFunQt[184] = GetPrAddres(bGui, hQtGui, "_ZN11QFileDialog15getOpenFileNameEP7QWidgetRK7QStringS4_S4_PS2_6QFlagsINS_6OptionEE"); if (!pFunQt[184]) 
         MessageErrorLoad(showError, "QFileDialog::getOpenFileName(QWidget*, QString const&, QString const&, QString const&, QString*, QFlags<QFileDialog::Option>)"w, 2);
     pFunQt[185] = GetPrAddres(bQtE, hQtE, "QT_QFileDialog_getOpenFileName"); if (!pFunQt[185]) MessageErrorLoad(showError, "QT_QFileDialog_getOpenFileName"w, 2);
+// ============ QPaint ===============
+    pFunQt[186] = GetPrAddres(bQtE, hQtE, "eQWidget_setPaintEvent"); if (!pFunQt[186]) MessageErrorLoad(showError, "eQWidget_setPaintEvent"w, 2);
+    pFunQt[187] = GetPrAddres(bQtE, hQtE, "QT_QPainterNEW"); if (!pFunQt[187]) MessageErrorLoad(showError, "QT_QPainterNEW"w, 2);
+    pFunQt[188] = GetPrAddres(bQtE, hQtE, "QT_QPainter_drawLine"); if (!pFunQt[188]) MessageErrorLoad(showError, "QT_QPainter_drawLine"w, 2);
+    pFunQt[189] = GetPrAddres(bQtE, hQtE, "QT_QPainterDELETE"); if (!pFunQt[189]) MessageErrorLoad(showError, "QT_QPainterDELETE"w, 2);
+
+    pFunQt[190] = GetPrAddres(bQtE, hQtE, "width_eQWidget"); if (!pFunQt[190]) MessageErrorLoad(showError, "width_eQWidget"w, 2);
+    pFunQt[191] = GetPrAddres(bQtE, hQtE, "height_eQWidget"); if (!pFunQt[191]) MessageErrorLoad(showError, "height_eQWidget"w, 2);
+
+    pFunQt[196] = GetPrAddres(bQtE, hQtE, "QT_QPainter_begin"); if (!pFunQt[196]) MessageErrorLoad(showError, "QT_QPainter_begin"w, 2);
+    pFunQt[197] = GetPrAddres(bQtE, hQtE, "QT_QPainter_end"); if (!pFunQt[197]) MessageErrorLoad(showError, "QT_QPainter_end"w, 2);
     
+// ============ QPrinter ===============
+    pFunQt[192] = GetPrAddres(bQtE, hQtE, "QT_QPrinterNEW"); if (!pFunQt[192]) MessageErrorLoad(showError, "QT_QPrinterNEW"w, 2);
+    pFunQt[193] = GetPrAddres(bGui, hQtGui, "_ZN8QPrinter15setOutputFormatENS_12OutputFormatE"); if (!pFunQt[193]) MessageErrorLoad(showError, "QPrinter::setOutputFormat(QPrinter::OutputFormat)"w, 2);
+    pFunQt[194] = GetPrAddres(bGui, hQtGui, "_ZN8QPrinter17setOutputFileNameERK7QString"); if (!pFunQt[194]) MessageErrorLoad(showError, "QPrinter::setOutputFileName(QString const&)"w, 2);
+    pFunQt[195] = GetPrAddres(bQtE, hQtE, "QT_QPrinter_getThis"); if (!pFunQt[195]) MessageErrorLoad(showError, "QT_QPrinter_getThis"w, 2);
+// ============ QFont ===============
+    pFunQt[198] = GetPrAddres(bQtE, hQtE, "QT_QFontNEW"); if (!pFunQt[198]) MessageErrorLoad(showError, "QT_QFontNEW"w, 2);
+    pFunQt[199] = GetPrAddres(bQtE, hQtE, "QT_QFontDELETE"); if (!pFunQt[199]) MessageErrorLoad(showError, "QT_QFontDELETE"w, 2);
+    pFunQt[200] = GetPrAddres(bGui, hQtGui, "_ZN5QFont12setPointSizeEi"); if (!pFunQt[200]) MessageErrorLoad(showError, "QFont::setPointSize(int)"w, 2);
+
+    pFunQt[201] = GetPrAddres(bQtE, hQtE, "QT_QPainter_drawText1"); if (!pFunQt[201]) MessageErrorLoad(showError, "QT_QPainter_drawText1"w, 2);
+    pFunQt[202] = GetPrAddres(bGui, hQtGui, "_ZN7QWidget7setFontERK5QFont"); if (!pFunQt[202]) MessageErrorLoad(showError, "QWidget::setFont(QFont const&)"w, 2);
+    pFunQt[203] = GetPrAddres(bGui, hQtGui, "_ZN8QPainter7setFontERK5QFont"); if (!pFunQt[203]) MessageErrorLoad(showError, "QPainter::setFont(QFont const&)"w, 2);
+    pFunQt[204] = GetPrAddres(bGui, hQtGui, "_ZN5QFont9setFamilyERK7QString"); if (!pFunQt[204]) MessageErrorLoad(showError, "QFont::setFamily(QString const&)"w, 2);
+    pFunQt[205] = GetPrAddres(bGui, hQtGui, "_ZNK6QLabel4textEv"); if (!pFunQt[205]) MessageErrorLoad(showError, "QString* QLabel::text() const"w, 2);
+    pFunQt[206] = GetPrAddres(bQtE, hQtE, "QT_QLabel_text"); if (!pFunQt[206]) MessageErrorLoad(showError, "QT_QLabel_text"w, 2);
+// ============ QDate ===============
+    pFunQt[207] = GetPrAddres(bQtE, hQtE, "QT_QDateNEW"); if (!pFunQt[207]) MessageErrorLoad(showError, "QT_QFontNEW"w, 2);
+    pFunQt[208] = GetPrAddres(bQtE, hQtE, "QT_QFontDELETE"); if (!pFunQt[208]) MessageErrorLoad(showError, "QT_QFontDELETE"w, 2);
+    pFunQt[209] = GetPrAddres(bQtE, hQtE, "QT_QDate_currentDate"); if (!pFunQt[209]) MessageErrorLoad(showError, "QT_QDate_currentDate"w, 2);
+    pFunQt[210] = GetPrAddres(bQtE, hQtE, "QT_QDate_toString"); if (!pFunQt[210]) MessageErrorLoad(showError, "QT_QDate_toString"w, 2);
+
+    pFunQt[211] = GetPrAddres(bQtE, hQtE, "QT_QLineEdit_TextChanged"); if (!pFunQt[211]) MessageErrorLoad(showError, "QT_QLineEdit_TextChanged"w, 2);
     return 0;
 } ///  Загрузить DLL-ки Qt и QtE. Найти в них адреса функций и заполнить ими таблицу
 
@@ -843,6 +899,9 @@ class QObject {
 	this(void* parent) {
 		p_QObject = (cast(t_QObject)pFunQt[26])(parent);
 	} /// Конструктор. Создает рельный QObject и сохраняет его адрес в p_QObject
+	void setQtObj(void* adr) {
+	    p_QObject = adr;
+	} /// Заменить указатель в объекте на новый указатель
 	@property void* QtObj() {
 		return p_QObject;  
 	} /// Выдать указатель на реальный объект Qt C++
@@ -855,6 +914,15 @@ class QObject {
 	void* parent() {
         return (cast(t_vp__vp)pFunQt[169])(p_QObject);
 	} /// Вернуть из C++ реального родителя
+	@property void* thisQtObj() {
+        return *(cast(void**)p_QObject);
+	}
+	/*
+	@property void* thisQtObj1() {
+	    writeln("=", p_QObject, "=", QtObj+4);
+        return *(cast(void**)(p_QObject+4));
+	}
+	*/
 }
 // ================ QTextCodec ==================
 /++
@@ -916,7 +984,7 @@ class QApplication: QObject {
 		(cast(t_v__vp_vp)pFunQt[64])(cast(void*)bufObj, pal.QtObj);
 	} /// Вставить палитру
 }
-class QFrame: QObject {
+class QFrame: gWidget {
     enum Shape {
         NoFrame     = 0,      // no frame
         Box         = 0x0001, // rectangular box
@@ -931,7 +999,6 @@ class QFrame: QObject {
         Raised = 0x0020, // raised shadow effect
         Sunken = 0x0030  // sunken shadow effect
     }
-
    ~this() {
         p_QObject = null;
      }
@@ -945,7 +1012,38 @@ class QFrame: QObject {
         (cast(t_v__vp_i)pFunQt[166])(QtObj, sh);
     }
 }
-
+// ================ QPaintDevice ================
+class QPaintDevice: QObject  {
+    this() {
+	    super();
+    }
+}
+// ================ QPrinter ================
+class QPrinter: QPaintDevice {
+    enum PrinterMode {
+        ScreenResolution  = 0, // Sets the resolution of the print device to the screen resolution
+        PrinterResolution = 1, // Is is equivalent to ScreenResolution on Unix and HighResolution on Windows and Mac.
+        HighResolution = 2  // On Windows, sets the printer resolution to that defined for the printer in use. 
+                            // For PostScript printing, sets the resolution of the PostScript driver to 1200 dpi.
+    }
+    enum OutputFormat {
+        NativeFormat  = 0, // print output using a method defined by the platform it is running on.
+        PdfFormat = 1, // will generate its output as a searchable PDF file. This mode is the default when printing to a file.
+        PostScriptFormat = 2  // will generate its output as in the PostScript format.
+    }
+    this(PrinterMode mode = PrinterMode.ScreenResolution) {
+        p_QObject = (cast(t_vp__vp)pFunQt[192])(cast(void*)mode);
+    }
+    void setOutputFormat(OutputFormat format) {
+        (cast(t_v__vp_vp)pFunQt[193])(QtObj, cast(void*)format);
+    }
+    void setOutputFileName(QString s) {
+        (cast(t_v__vp_vp)pFunQt[194])(QtObj, s.QtObj);
+    }
+    void* thisPrinter() {
+        return (cast(t_vp__vp)pFunQt[195])(QtObj);
+    }
+}
 // ================ gWidget ================
 /++
 	QWidget (Окно), но немного модифицированный в QtE.DLL. 
@@ -953,7 +1051,7 @@ class QFrame: QObject {
 	<br>Добавлены свойства хранящие адреса для вызова обратных функций
 	для реакции на события.
 +/		
-class gWidget: QFrame  {
+class gWidget: QPaintDevice {
     void del() {
         if (p_QObject) {
             (cast(t_v__vp)pFunQt[93])(p_QObject);
@@ -1013,6 +1111,9 @@ class gWidget: QFrame  {
 	  +  <br>. . .
 	  + </code>
 	  +/
+	void setPaintEvent(void* adr) {		// Установить обработчик на событие CloseEvent
+		(cast(t_v__vp_vp)pFunQt[186])(p_QObject, adr);
+	} /++ Установить обработчик на событие CloseEvent. Здесь <u>adr</u> - адрес на функцию D +/
 	void setCloseEvent(void* adr) {		// Установить обработчик на событие CloseEvent
 		(cast(t_v__vp_vp)pFunQt[92])(p_QObject, adr);
 	} /++ Установить обработчик на событие CloseEvent. Здесь <u>adr</u> - адрес на функцию D +/
@@ -1031,6 +1132,15 @@ class gWidget: QFrame  {
     void setToolTip(QString str) {
         (cast(t_v__vp_vp)pFunQt[172])(QtObj, str.QtObj);
     } /// Добавить строку всплывающей подсказки
+    int width() {
+        return (cast(t_i__vp)pFunQt[190])(QtObj);
+    }
+    int height() {
+        return (cast(t_i__vp)pFunQt[191])(QtObj);
+    }
+    void setFont(QFont font) {
+        (cast(t_v__vp_vp)pFunQt[202])(QtObj, font.QtObj);
+    } /// установить шрифт виджета
 }
 // ================ QByteArray ================
 class QByteArray: QObject {
@@ -1289,6 +1399,9 @@ class QLineEdit: gWidget {
 	} /++ Установить обработчик на событие OnReturnPressed. Здесь <u>adr</u> - адрес на функцию D
 	  + обрабатывающую событие.  Обработчик получает аргумент. См. док. Qt
 	  +/
+    void setOnTextChanged(void* adr) {        // Установить обработчик на событие OnReturnPressed
+        (cast(t_v__vp_vp)pFunQt[211])(p_QObject, adr);
+    } 
 	void set(QString adr) {	
 		(cast(t_v__vp_vp)pFunQt[74])(p_QObject, adr.QtObj);
 	} /// Установить значение QString в QLineEdit
@@ -1986,7 +2099,7 @@ class QTcpSocket: QAbstractSocket  {
     }		
 }
 // ============ QLabel =======================================
-class QLabel: gWidget  {
+class QLabel: QFrame  {
     this(gWidget parent) {
         super();  //  Это заглушка, что бы наследовать D класс не создавая экземпляра в Qt C++
         if (parent) {
@@ -2002,6 +2115,9 @@ class QLabel: gWidget  {
     void setText(QString str) {
         (cast(t_v__vp_vp)pFunQt[164])(QtObj, str.QtObj);
     } /// Установить текст на QLabel
+    void text(QString s) {
+        (cast(t_v__vp_vp)pFunQt[206])(QtObj, s.QtObj);
+    } /// Вернуть текст надписи в s 
     void setAlignment(QtE.AlignmentFlag fl) {
         (cast(t_v__vp_i)pFunQt[168])(QtObj, fl);
     } /// Выравнивание
@@ -2071,6 +2187,74 @@ class QFileDialog: gWidget {
         void* p5; if(selectedFilter) { p5=selectedFilter.QtObj; } else { s5 = new QString(); p5 = s5.QtObj; } 
         o6 = options;
         (cast(t_vp__vp_vp_vp_vp_vp_vp_vp_vp)pFunQt[185])(QtObj, p1, p2, p3, p4, p5, cast(void*)o6, rez.QtObj);
+        return rez;
+    }
+}
+// ============ QPainter ===============
+class QPainter: QObject {
+	this(void* QPaintDevice) {
+		super(); 
+		setQtObj(QPaintDevice); // (cast(t_vp__vp)pFunQt[187])(QPaintDevice);
+    }
+    ~this() {
+        // (cast(t_v__vp)pFunQt[189])(QtObj);
+    }   
+    void del() {
+        (cast(t_v__vp)pFunQt[189])(QtObj);
+    }
+    void drawLine(int x1, int y1, int x2, int y2) {
+        (cast(t_v__vp_i_i_i_i)pFunQt[188])(QtObj, x1, y1, x2, y2);
+    }
+//    void setQtObj(void* QPaintDevice) {
+//		p_QObject = QPaintDevice;
+//    }
+    void setPaintDevice(void* QPaintDevice) {
+        p_QObject = (cast(t_vp__vp)pFunQt[187])(QPaintDevice);
+    }
+    void begin(void* QPaintDevice) {
+        (cast(t_v__vp_vp)pFunQt[196])(QtObj, QPaintDevice);
+    }
+    void end() {
+        (cast(t_v__vp)pFunQt[197])(QtObj);
+    }
+    void drawText(int x, int y, QString str) {
+        (cast(t_v__vp_vp_i_i)pFunQt[201])(QtObj, str.QtObj, x, y);
+    }
+    void setFont(QFont font) {
+        (cast(t_v__vp_vp)pFunQt[203])(QtObj, font.QtObj);
+    }
+}
+// ============ QFont ===============
+class QFont: QObject {
+	this() {
+		super(); p_QObject = (cast(t_vp__v)pFunQt[198])();
+    } /// Создать QFont
+   ~this() {
+         (cast(t_v__vp)pFunQt[199])(QtObj);
+         p_QObject = null; 
+    }
+    void setPointSize(int size) {
+        (cast(t_v__vp_i)pFunQt[200])(QtObj, size);
+    } /// Установить размер шрифта в поинтах
+    void setFamily(QString str) {
+        (cast(t_v__vp_vp)pFunQt[204])(QtObj, str.QtObj);
+    } /// Наименование шрифта Например: "True Times"
+}
+// ============ QDate ===============
+class QDate: QObject {
+	this() {
+		super(); p_QObject = (cast(t_vp__v)pFunQt[207])();
+    } /// Создать QDate
+   ~this() {
+      //   (cast(t_v__vp)pFunQt[208])(QtObj);
+         p_QObject = null; 
+    }
+    QDate currentDate() {
+        p_QObject = (cast(t_vp__vp)pFunQt[209])(QtObj);
+        return this;
+    }
+    QString toString(QString rez, QString shabl) {
+        (cast(t_v__vp_vp_vp)pFunQt[210])(QtObj, rez.QtObj, shabl.QtObj);
         return rez;
     }
 }
