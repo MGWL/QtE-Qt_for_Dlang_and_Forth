@@ -21,7 +21,7 @@ Compile Linux:
 
 Home page: http://qte.ucoz.ru
 
-<p align="center"></p><h3>The real application. Search for duplicates of enterprises. Wtite in D + QtE.d</h3><p></p>
+<p align="center"></p><h3>The real application. Search for duplicates of enterprises. Written in D + QtE.d</h3><p></p>
 <p>Notice the simplicity of the compilation and link.</p>
 <table border="2" bordercolor="#0000FF" align="center">
  <tbody><tr> 
