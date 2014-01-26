@@ -27,13 +27,13 @@ Home page: http://qte.ucoz.ru
 <table border="2" bordercolor="#0000FF" align="center">
  <tbody><tr> 
  <td> 
- <p><a href="http://qte.ucoz.ru/QtE_win_1.png"><img alt="Windows7" src="http://qte.ucoz.ru/QtE_win_1.png" width="340" height="255" border="0"></a></p>
+ <p><a href="http://qte.ucoz.ru/QtE_win_1.png"><img alt="Windows 7 (Qt 4.5.2)" src="http://qte.ucoz.ru/QtE_win_1.png" width="340" height="255" border="0"></a></p>
  </td>
  <td>
 -
  </td>
  <td> 
- <p><a href="http://qte.ucoz.ru/QtE_linux_1.png"><img alt="Linux Fedora 18" src="http://qte.ucoz.ru/QtE_linux_1.png" width="340" height="255" border="0"></a></p>
+ <p><a href="http://qte.ucoz.ru/QtE_linux_1.png"><img alt="Linux Fedora 18 (Qt 4.8)" src="http://qte.ucoz.ru/QtE_linux_1.png" width="340" height="255" border="0"></a></p>
  </td>
  </tr>
  <tr> 
