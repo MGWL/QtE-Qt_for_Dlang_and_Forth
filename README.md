@@ -38,13 +38,13 @@ Home page: http://qte.ucoz.ru
  </tr>
  <tr> 
  <td> 
- <div align="center"><font size="-1">Windows 7</font></div>
+ <div align="center"><font size="-1">Windows 7 (Qt 4.5.2)</font></div>
  </td>
  <td>
 -
  </td>
  <td> 
- <div align="center"><font size="-1">Linux Fedora 18</font></div>
+ <div align="center"><font size="-1">Linux Fedora 18 (Qt 4.8)</font></div>
  </td>
  </tr>
  </tbody></table>
