@@ -14,14 +14,14 @@ created using QtE.DLL(so) in C++. This method allows reducing programming in C++
 making the QtE library.
 
 Compile Windows:
-  dmd XXX.d qte.d
+  `dmd XXX.d qte.d`
 
 Compile Linux:
-  dmd XXX.d qte.d -L-ldl
+  `dmd XXX.d qte.d -L-ldl`
 
 Home page: http://qte.ucoz.ru
 
-<p align="center"></p><h3>Real application. Find dublicat in list factory. Wtite in D + QtE.d</h3><p></p>
+<p align="center"></p><h3>The real application. Search for duplicates of enterprises. Wtite in D + QtE.d</h3><p></p>
 <p>Notice the simplicity of the compilation and link.</p>
 <table border="2" bordercolor="#0000FF" align="center">
  <tbody><tr> 
