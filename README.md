@@ -22,7 +22,7 @@ Compile Linux:
 Home page: http://qte.ucoz.ru
 
 <p align="center"></p><h3>The real application. Search for duplicates of enterprises.</h3><p></p>
-<p align="center"></p><h2>Written in <b>D + QtE.d</b></h2><p></p>
+<p align="center"></p><h4>Written in <b>D + QtE.d</b></h4><p></p>
 <p>Notice the simplicity of the compilation and link.</p>
 <table border="2" bordercolor="#0000FF" align="center">
  <tbody><tr> 
