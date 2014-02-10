@@ -23,7 +23,7 @@ Home page: http://qte.ucoz.ru
 
 This link:
 http://yadi.sk/d/l4rd7-QPHdpHM
-will help you you can upload a set of ready DLL (so) to test the QtE. The archive contains the minimum set of ready files for Qt and QtE for Windows 32 and Linux 32. This will allow you to test QtE without installing Qt on your PC
+will help you can upload a set of ready DLL (so) to test the QtE. The archive contains the minimum set of ready files for Qt and QtE for Windows 32 and Linux 32. This will allow you to test QtE without installing Qt on your PC
 
 <p align="center"></p><h3>The real application. Search for duplicates of enterprises.</h3><p></p>
 <p align="center"></p><h4>Written in <b>D + QtE.d</b></h4><p></p>
