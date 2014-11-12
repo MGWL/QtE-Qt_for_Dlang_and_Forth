@@ -16,10 +16,11 @@ int main(string[] args) {
     QString tmpQs;
     QByteArray ba;
     QLabel label;
-    
+
+     
     // Проверим режим загрузки. Если есть '--debug' старт в отладочном режиме с показом диагностики загрузки QtE
     // Check the boot mode. If there is a '--debug' start in debug mode with display of the diagnostic boot QtE
-    bool fDebug; fDebug = false; foreach (arg; args[0 .. args.length])  { if (arg=="--debug") fDebug = true; }
+    bool fDebug; foreach(arg; args) if (arg=="--debug") fDebug = true; 
     
     // Загрузка графической библиотеки. fDebug=F без диагностики, T=Диагностика загрузки
     // Load the graphics library. fDebug=F without a diagnosis, T=Diagnostics download enable
@@ -27,7 +28,7 @@ int main(string[] args) {
     
     // Инициализация Qt. Посл параметр T=GUI, F=консольное приложение
     // Initialization Of Qt. The last parameter T=GUI F=console application
-    app = new QApplication; (app.adrQApplication())(cast(void*)app.bufObj, &Runtime.cArgs.argc, Runtime.cArgs.argv, true);
+    app = new QApplication(&Runtime.cArgs.argc, Runtime.cArgs.argv, 1); 
     
     // Инициализация внутренних перекодировок
     // Initialize internal levels
