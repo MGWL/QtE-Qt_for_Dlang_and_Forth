@@ -5,6 +5,27 @@
 
 #include "qte.h"
 
+// Lazarus
+typedef int           PTRINT;
+typedef unsigned int PTRUINT;
+
+typedef struct QApplication__ { PTRINT dummy; } *QApplicationH;
+typedef struct QWidget__ { PTRINT dummy; } *QWidgetH;
+
+extern "C" QApplicationH lzQApplication_create(int* argc, char** argv, int AnonParam3)
+{
+    return (QApplicationH) new QApplication(*(int*)argc, argv, AnonParam3);
+}
+extern "C" QWidgetH lzQWidget_create(QWidgetH parent, unsigned int f)
+{
+    return (QWidgetH) new QWidget((QWidget*)parent, (Qt::WindowFlags)f);
+}
+extern "C" void lzQWidget_destroy(QWidgetH handle)
+{
+    delete (QWidget *)handle;
+}
+
+
 static char NameCodec[80];
 extern "C" void* adrNameCodec(void) {
     return &NameCodec;
@@ -21,6 +42,29 @@ extern "C" void* QApplication_create(int argc, char** argv, bool GUIenabled)
 }
 // --------- Lazarus ---------
 // Фигня...  В Linux не работае, ошибка сегментации.
+
+// ==================== QComboBox ======================
+eQComboBox::eQComboBox(QWidget* parent) : QComboBox(parent)
+{
+        // aReturnPressed = NULL;
+        // aTextChanged = NULL;
+}
+eQComboBox::~eQComboBox()
+{
+}
+// !!! Выдать QComboBox на стек
+extern "C" void *QT_QComboBox(QWidget* parent) {
+        return  new eQComboBox(parent);
+}
+extern "C" void QT_QComboBox_addItem1(eQComboBox* cmb, QString *qstr, int i) {
+    cmb->addItem(*qstr, i);
+}
+extern "C" int QT_QComboBox_currentIndex(eQComboBox* cmb) {
+    return cmb->currentIndex();
+}
+extern "C" void QT_QComboBox_setCurrentIndex(eQComboBox* cmb, int i) {
+    cmb->setCurrentIndex(i);
+}
 
 
 // ==================== QLineEdit ======================
@@ -99,6 +143,7 @@ eQWidget::eQWidget( QWidget* parent): QWidget( parent ) {
     aOnResize = NULL;
     aCloseEvent = NULL;
     aPaintEvent = NULL;
+    aKeyPressEvent = NULL;
 }
 eQWidget::~eQWidget()
 {
@@ -131,7 +176,36 @@ void eQWidget::resizeEvent( QResizeEvent *a )
 {
     if (aOnResize!= NULL) ((ExecZIM_1_0)aOnResize)((void *)a);
 }
+// ------ обработка KeyEvent ------
+void eQWidget::setaKeyPressEvent(void* adr)
+{
+    aKeyPressEvent = adr;
+}
+extern "C" void setkeyPressEvent( eQWidget* wid, void* adr )
+{
+    wid->setaKeyPressEvent(adr);
+}
+
+void eQWidget::keyPressEvent( QKeyEvent *event)
+{
+    if (aKeyPressEvent != NULL) ((ExecZIM_1_0)aKeyPressEvent)((void *)event);
+    QWidget::keyPressEvent(event);
+}
+extern "C" int fromQKeyEvent_key(QKeyEvent *e)
+{
+    return e->key();
+}
+extern "C" int fromQKeyEvent_Modifiers(QKeyEvent *e)
+{
+    return (Qt::KeyboardModifiers)e->modifiers();
+}
+
+// ---------------------------
 // -------------------->   void setCloseEvent( eQWidget* wid, void* adr )
+
+extern "C" bool eQWidget_isVisible(QWidget* w) {
+    return w->isVisible();
+}
 
 extern "C" eQWidget* p_eQWidget(QWidget* parent) {
     return new eQWidget(parent);
@@ -213,6 +287,14 @@ extern "C" QByteArray* QByteArray_mid(QByteArray* s1, QByteArray* z, int pos, in
     *z = s1->mid(pos, len);
     return z;
 }
+extern "C" QByteArray* QByteArray_trimmed(QByteArray* s1) {
+    *s1 = s1->trimmed();
+    return s1;
+}
+extern "C" QByteArray* QByteArray_simplified(QByteArray* s1) {
+    *s1 = s1->simplified();
+    return s1;
+}
 
 
 extern "C" QChar* QString_data(QString *s) {
@@ -221,11 +303,53 @@ extern "C" QChar* QString_data(QString *s) {
 extern "C" int QString_size(QString *s) {
     return s->size();
 }
+// ==================== QPlainTextEdit =================
+eQPlainTextEdit::eQPlainTextEdit( QWidget* parent): QPlainTextEdit( parent ) {
+    // aOnResize = NULL;
+}
+eQPlainTextEdit::~eQPlainTextEdit()
+{
+}
+
+extern "C" void *p_QPlainTextEdit_new(QWidget* parent) {
+        return  new eQPlainTextEdit(parent);
+}
+extern "C" void  p_QPlainTextEdit_del(eQPlainTextEdit* pte) {
+        delete pte;
+}
+extern "C" void*  QT_QPlainTextEdit_toPlainText(eQPlainTextEdit* pte, QString* qs) {
+    qs->clear();
+    qs->append(pte->toPlainText());
+    return qs;
+}
+extern "C" void* QT_QPlainTextEdit_document(eQPlainTextEdit* qw) {
+        return qw->document();
+}
+
 
 // ==================== QTextEdit ======================
 extern "C" void *p_QTextEdit(QWidget* parent) {
         return  new QTextEdit(parent);
 }
+extern "C" void QtE_QTextEdit_GetQString(QTextEdit* te, QString* s) {
+    QTextBlock tb = te->textCursor().block(); //..block().text().trimmed();
+    *s = tb.text().trimmed();
+}
+extern "C"  void* QT_QTextEdit_toPlainText(QTextEdit* te, QString* qs) {
+    qs->clear();
+    qs->append(te->toPlainText());
+    return qs;
+}
+extern "C"  void* QT_QTextEdit_toHTML(QTextEdit* te, QString* qs) {
+    qs->clear();
+    qs->append(te->toHtml());
+    return qs;
+}
+extern "C" void* QT_QTextEdit_document(QTextEdit* qw) {
+        return qw->document();
+}
+
+
 // ==================== QPushButton ====================
 extern "C" void *QT_QPushButton(QWidget* parent, QString name) {
         return  new QPushButton(name, parent);
@@ -304,9 +428,9 @@ extern "C" void eSlot_setSignal1(eSlot* slot, void* par1) {
      slot->sendSignal1(par1);
 }
 // ==================== QMsgBox ======================
-extern "C" void* QT_QMessageBox(void)
+extern "C" void* QT_QMessageBox(QWidget* parent)
 {
-        return new QMessageBox();
+        return new QMessageBox(parent);
 }
 extern "C" int QT_QMessageBox_exec(QMessageBox* box)
 {
@@ -338,6 +462,7 @@ eQMainWindow::eQMainWindow(QWidget* parent = 0, Qt::WindowFlags flags = 0 ): QMa
 // eQMainWindow::eQMainWindow(QWidget* parent = 0, Qt::WindowFlags flags = 0 ) {
     aOnResize = NULL;
     aCloseEvent = NULL;
+    aOnTimer = NULL;
 }
 eQMainWindow::~eQMainWindow()
 {
@@ -369,6 +494,19 @@ void eQMainWindow::resizeEvent( QResizeEvent *a )
 {
     if (aOnResize!= NULL) ((ExecZIM_1_0)aOnResize)((void *)a);
 }
+void eQMainWindow::timerEvent(QTimerEvent* event)
+{
+    if (aOnTimer != NULL) ((ExecZIM_v__i)aOnTimer)(event->timerId());
+    // printf("\n ----- C++ eQMainWindow::timerEvent --> ID = %d -----\n", event->timerId());
+}
+extern "C" void QMainWindow_setOnTimer( eQMainWindow* wid, void* adr )
+{
+    wid->aOnTimer = adr;
+}
+extern "C" void QT_QMainWindow_addToolBar(QMainWindow *mw, QToolBar *sb)
+{
+     mw->addToolBar(sb);
+}
 // ===================== StatusBar =====================
 extern "C" void* QT_QStatusBar(QWidget* parent)
 {
@@ -387,6 +525,19 @@ extern "C" void* QT_QSpinBox(QWidget* parent)
 extern "C"  void QT_QSpinBoxDel(QSpinBox* parent) {
     delete parent;
 }
+extern "C" void QT_QSpinBox_setValue(QSpinBox* sp, int n) {
+    sp->setValue(n);
+}
+extern "C" int QT_QSpinBox_value(QSpinBox* sp) {
+    return sp->value();
+}
+extern "C" void QT_QSpinBox_setMin(QSpinBox* sp, int n) {
+    sp->setMinimum(n);
+}
+extern "C" void QT_QSpinBox_setMax(QSpinBox* sp, int n) {
+    sp->setMaximum(n);
+}
+
 // ===================== QPalette =====================
 extern "C" void* QT_QPalette(void)
 {
@@ -405,11 +556,75 @@ extern "C" void* QT_QColor(void)
 {
        return new QColor();
 }
+// ================ QSyntaxHighlighter ==============
+zQSyntaxHighlighter::zQSyntaxHighlighter(QTextDocument *parent) : QSyntaxHighlighter(parent) {
+    mparserEvent = NULL;
+}
+void zQSyntaxHighlighter::setFormatFont(int start, int count, QFont *font) {
+    this->setFormat(start, count, *font);
+}
+void zQSyntaxHighlighter::setFormatColor(int start, int count, QColor *color) {
+    this->setFormat(start, count, *color);
+}
+void zQSyntaxHighlighter::highlightBlock(const QString &text ) {
+   if (mparserEvent != NULL)  ((ExecZIM_1_0)mparserEvent)((void *)&text);
+}
+extern "C" void* QT_QSyntaxHighlighterNEW(QTextDocument *te) {
+    return new zQSyntaxHighlighter(te);
+}
+extern "C" void QT_QSyntaxHighlighter_OnParser(zQSyntaxHighlighter *hl, void* adr) {
+    hl->mparserEvent = adr;    // Указатель на слово
+}
+extern "C" void QT_QSyntaxHighlighter_FormatFont(zQSyntaxHighlighter *hl, QFont *font, int count, int start) {
+     hl->setFormatFont(start, count, font);
+}
+extern "C" void QT_QSyntaxHighlighter_FormatColor(zQSyntaxHighlighter *hl, QColor *color, int count, int start) {
+     hl->setFormatColor(start, count, color);
+}
+// ===================== QTextDocument =====================
+extern "C" void* QT_QTextDocumentNEW1(QPlainTextEdit *te) {
+    return te->document();
+}
+extern "C" void* QT_QTextDocumentNEW2(QTextEdit *te) {
+    return te->document();
+}
+
 // ===================== QApplication =====================
 extern "C" void QT_QApp_setPalette(QApplication* app, QPalette* pal)
 {
        app->setPalette(*pal);
 }
+extern "C" void * QT_QApp_appFilePath(QApplication *adrthis, QString *adrqs) {
+    *adrqs = adrthis->applicationFilePath();
+    return adrthis;
+}
+extern "C" void * QT_QApp_appDirPath(QApplication *adrthis, QString *adrqs) {
+    *adrqs = adrthis->applicationDirPath();
+    return adrthis;
+}
+extern "C" void * QT_QApp_arg(QApplication *adrthis, int n, QString *adrqs) {
+    *adrqs =  adrthis->arguments().at(n);
+    return NULL;
+}
+extern "C" void * QT_QApp_processEvents(QApplication *adrthis) {
+    adrthis->processEvents();
+    return NULL;
+}
+// ===================== QPoint =============================
+extern "C" void * QT_QPoint_new1() {
+    return new QPoint();
+}
+extern "C" void * QT_QPoint_new2(int xpos, int ypos) {
+    return new QPoint(xpos, ypos);
+}
+// ===================== QRect =============================
+extern "C" void * QT_QRect_new1() {
+    return new QRect();
+}
+extern "C" void * QT_QRect_new2(int left, int top, int width, int height) {
+    return new QRect(left, top, width, height);
+}
+
 // ===================== QScriptEngine =====================
 extern "C" void* QT_QScriptEngine(void)
 {
@@ -439,6 +654,9 @@ extern "C" void QT_QAction_onClick(eAction *act, void* adr) {
 }
 extern "C" void QT_QAction_setIcon(eAction *act, QIcon *ik) {
                 act->setIcon(*ik);
+}
+extern "C" void QT_QAction_setEnabled(eAction *act, bool p) {
+                act->setEnabled(p);
 }
 // ================= QMenu ==================================
 extern "C"  void *QT_QMenu(QWidget * parent) {
@@ -506,6 +724,31 @@ extern "C"  qint64 QIODevice_write(QIODevice* dev, char* buf, qint64 size) {
 extern "C"  void QIODevice_setTextModeEnabled(QIODevice* dev, bool mode) {
     dev->setTextModeEnabled(mode);
 }
+extern "C"  void QIODevice_readAll(QIODevice* dev, QString* qs) {
+    QString s = dev->readAll();
+    qs->append(s);
+}
+
+// ============ QFile ===================
+extern "C"  void *QT_QFile_new(QObject* parent) {
+    return new QFile(parent);
+}
+extern "C"  void *QT_QFile_new1(QString* str) {
+    return new QFile(*str);
+}
+// ============ QTextStream =======================================
+extern "C"  void* QT_QTextStream3(QByteArray* ba, int mode) {
+    return new QTextStream(ba, (QIODevice::OpenMode)mode);
+}
+extern "C"  void* QT_QTextStream4(QIODevice* dev) {
+    return new QTextStream(dev);
+}
+extern "C"  void* QT_QTextStream_readAll(QTextStream* ts, QString* qs) {
+    qs->clear();
+    qs->append(ts->readAll());
+    return qs;
+}
+
 // ============ QDataStream =======================================
 extern "C"  void *QT_QDataStream(void) {
     // printf("\n ----- C++ QDataStream -------\n");
@@ -626,6 +869,14 @@ extern "C" void* QT_QPrinterNEW(QPrinter::PrinterMode mode) {
 extern "C" void* QT_QPrinter_getThis(eQPrinter* pr) {
     return pr->getThis();
 }
+// ================= QFrame =================
+extern "C" void* QT_QFrameNEW(QWidget* parent, Qt::WindowType f) {
+    return new QFrame(parent, f);
+}
+extern "C" void QT_QQFrameDELETE(QFrame* p) {
+    delete p;
+}
+
 // ================= QFont =================
 extern "C" void* QT_QFontNEW(void) {
     return new QFont();
@@ -633,6 +884,23 @@ extern "C" void* QT_QFontNEW(void) {
 extern "C" void QT_QFontDELETE(QFont* p) {
     delete p;
 }
+// ================= QTime =================
+extern "C" void* QT_QTimeNEW(void) {
+    return new QTime();
+}
+extern "C" void QT_QTimeDELETE(QTime* d) {
+    delete d;
+}
+extern "C" QTime* QT_QTime_currentTime(QTime* d) {
+    *d = d->currentTime();
+    return d;
+}
+// extern "C" QString* QT_QDate_toString(QDate* d, QString* rez, QString* shabl) {
+extern "C" void* QT_QTime_toString(QTime* d, QString* rez, QString* shabl) {
+     *rez = d->toString(*shabl);
+     return rez;
+}
+
 // ================= QDate =================
 extern "C" void* QT_QDateNEW(void) {
     return new QDate();
@@ -648,6 +916,106 @@ extern "C" QDate* QT_QDate_currentDate(QDate* d) {
 extern "C" void* QT_QDate_toString(QDate* d, QString* rez, QString* shabl) {
      *rez = d->toString(*shabl);
      return rez;
+}
+// ================= QTemporaryFile =================
+extern "C" void* QT_QTemporaryFileNEW(QObject* parent) {
+    return new QTemporaryFile(parent);
+}
+extern "C" void QT_QTemporaryFileDELETE(QTemporaryFile* d) {
+    delete d;
+}
+extern "C" void QT_QTemporaryFile_text(QTemporaryFile* qw, QString *qstr) {
+     *qstr = qw->fileName();
+}
+// ============ QListWidget =======================================
+zQListWidget::zQListWidget(QWidget *parent)  : QListWidget(parent)
+{
+}
+
+zQListWidget::~zQListWidget()
+{
+}
+void zQListWidget::zitemClicked(QListWidgetItem *it)
+{
+        if (aItemClicked != NULL)
+        {
+            ((ExecZIM_0_0)aItemClicked)();
+        }
+}
+extern "C" void *QT_QListWidget(QWidget *parent) {
+        return  new zQListWidget(parent);
+}
+extern "C" void * QT_QListWidgetDEL(zQListWidget *lw) {
+    delete lw;
+    return NULL;
+}
+extern "C" void *QT_QListWidget_addItemStr(zQListWidget *lw, QString *qs) {
+    lw->addItem(*qs);
+    return  NULL;
+}
+// !!! Установить обработчик
+extern "C" void QT_QListWidget_onItemClicked(zQListWidget *lw, void *uk) {
+    lw->aItemClicked = uk;
+//    lw->connect(lw, SIGNAL( itemClicked(QListWidgetItem *) ), lw, SLOT( zitemClicked(QListWidgetItem *)) );
+    lw->connect(lw, SIGNAL( itemPressed(QListWidgetItem *) ), lw, SLOT( zitemClicked(QListWidgetItem *)) );
+}
+extern "C" void QT_QListWidget_currentText(zQListWidget *lw, QString *qstr) {
+     *qstr = lw->currentItem()->text();
+}
+extern "C" void * QT_QListWidget_clear(zQListWidget *lw) {
+    lw->clear();
+    return NULL;
+}
+// ================= QDialog =================
+extern "C" void* QT_QDialogNEW(QWidget* parent) {
+    return new QDialog(parent);
+}
+extern "C" void QDialogDELETE(QDialog* d) {
+    delete d;
+}
+// ================= QDialogButtonBox =================
+extern "C" void* QT_QDialogButtonBoxNEW(QWidget* parent) {
+    return new QDialogButtonBox(parent);
+}
+extern "C" void QDialogButtonBoxDELETE(QDialogButtonBox* d) {
+    delete d;
+}
+// ================= QTranslator =================
+extern "C" void* QT_QTranslatorNEW(void) {
+    return new QTranslator();
+}
+extern "C" void QT_QTranslatorDELETE(QTranslator* d) {
+    delete d;
+}
+extern "C" void QT_QTranslatorLoad(QTranslator* d, QString* qs) {
+     d->load(*qs);
+}
+extern "C" void QT_QApp_InstallTranslator(QApplication* app, QTranslator* d) {
+    app->installTranslator(d);
+}
+// ================= QToolBar =================
+extern "C" void* QT_QToolBarNew(QWidget* parent) {
+     return new QToolBar(parent);
+}
+extern "C" void  QT_QToolBar_addAction(QToolBar* menu, QAction *ac) {
+    menu->addAction(ac);
+}
+extern "C" void  QT_QToolBar_addSep(QToolBar *menu) {
+    menu->addSeparator();
+}
+// ================= QIcon =====================
+extern "C" void* QT_QIconNEW() {
+    return new QIcon();
+}
+extern "C" void QT_QIconDELETE(QIcon *pm) {
+    delete pm;
+}
+extern "C" void QT_QIcon_addFile(QIcon *pm, QString *file) {
+    pm->addFile(*file);
+}
+// ================= QDateEdit =====================
+extern "C" void* QT_QDateEditNEW1(QWidget* parent) {
+    return new QDateEdit(parent);
 }
 
 
