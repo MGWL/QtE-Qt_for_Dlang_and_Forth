@@ -15,14 +15,10 @@ class Exam: QMainWindow {
 }
 
 int main(string[] args) {
-    QApplication app;   
-
-    // Check the boot mode. If there is a '--debug' start in debug mode
-    bool fDebug; fDebug = false; foreach (arg; args[0 .. args.length])  { if (arg=="--debug") fDebug = true; }
-    // Download Qt graphics library
-    int rez = LoadQt( dll.Core | dll.Gui | dll.QtE, fDebug); if (rez==1) return 1;  
-    app = new QApplication; 
-    (app.adrQApplication())(cast(void*)app.bufObj, &Runtime.cArgs.argc, Runtime.cArgs.argv, true);
+    // Test load library. '--debug' start in debug state.
+    bool fDebug; foreach(arg; args) if (arg=="--debug") fDebug = true; 
+    int rez = LoadQt( dll.Core | dll.Gui | dll.QtE, fDebug); if (rez==1) return 1;  // Error load QtE
+    QApplication app = new QApplication(&Runtime.cArgs.argc, Runtime.cArgs.argv, 1);
     // ----------------------------------
     
     Exam ex = new Exam();
