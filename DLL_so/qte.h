@@ -16,6 +16,7 @@
   #include <QApplication>
   #include <QPushButton>
   #include <QTextEdit>
+  #include <QPlainTextEdit>
   #include <QLineEdit>
   #include <QTextCodec>
   #include <QMessageBox>
@@ -37,6 +38,7 @@
   #include <QtGui\QApplication>
   #include <QtGui\QPushButton>
   #include <QtGui\QTextEdit>
+  #include <QtGui\QPlainTextEdit>
   #include <QtGui\QLineEdit>
   #include <QtGui\QAction>
   #include <QtGui\QPalette>
@@ -58,12 +60,21 @@
   #include <QtGui\QRadioButton>
   #include <QtGui\QPainter>
   #include <QtGui\QPrinter>
+  #include <QtGui\QComboBox>
   #include <QtGui\QPaintEvent>
+  #include <QtGui\QListWidget>
   #include <QtCore\QTextCodec>
   #include <QtScript>
   #include <QtWebKit\QWebView>
   #include <QtNetwork\QTcpSocket>
   #include <QtNetwork\QAbstractSocket>
+  #include <QtGui\QDialog>
+  #include <QtGui\QDialogButtonBox>
+  #include <QtGui\QTextCursor>
+  #include <QtGui\QTextBlock>
+  #include <QtGui\QSyntaxHighlighter>
+  #include <QtGui\QToolBar>
+  #include <QtGui\QDateEdit>
 #endif
 
 #define FQT_API QTESHARED_EXPORT
@@ -102,15 +113,22 @@ signals:
 class eQWidget : public QWidget
 {
     Q_OBJECT
+protected:
+    void keyPressEvent(QKeyEvent *event);
+    void resizeEvent( QResizeEvent* );
+    void closeEvent(QCloseEvent*);
+    void paintEvent(QPaintEvent*);
 public:
     void* aOnResize;
     void* aCloseEvent;
     void* aPaintEvent;
+    void* aKeyPressEvent;
+
     eQWidget( QWidget* );
     ~eQWidget();
-    void resizeEvent( QResizeEvent* );
-    void closeEvent(QCloseEvent*);
-    void paintEvent(QPaintEvent*);
+    // void timerEvent(QTimerEvent*);
+
+    void setaKeyPressEvent(void*);
 };
 
 class eQPrinter : public QPrinter
@@ -126,12 +144,24 @@ class eQMainWindow : public QMainWindow
 {
     Q_OBJECT
 public:
+    void* aOnTimer;
     void* aOnResize;
     void* aCloseEvent;
     eQMainWindow(QWidget*, Qt::WindowFlags);
     ~eQMainWindow();
+    void timerEvent(QTimerEvent*);
     void resizeEvent(QResizeEvent*);
     void closeEvent(QCloseEvent*);
+};
+
+class eQPlainTextEdit : public QPlainTextEdit
+{
+    Q_OBJECT
+public:
+    // void* aOnTimer;
+    eQPlainTextEdit(QWidget*);
+    ~eQPlainTextEdit();
+    // void timerEvent(QTimerEvent*);
 };
 
 
@@ -158,6 +188,44 @@ public:
 public slots:
         void OnClick();
 };
+
+class zQListWidget : public QListWidget {
+    Q_OBJECT
+public:
+    zQListWidget(QWidget *parent = 0);
+    ~zQListWidget();
+    void *aItemClicked;
+public slots:
+    void zitemClicked(QListWidgetItem * item);
+};
+
+class eQComboBox : public QComboBox
+{
+    Q_OBJECT
+public:
+        eQComboBox(QWidget * parent = 0);
+        ~eQComboBox();
+        // void *aReturnPressed;
+        // void *aTextChanged;
+public slots:
+        // void returnPressed1();
+        // void sTextChanged(const QString& str);
+};
+
+#pragma pack(push, 4)
+class zQSyntaxHighlighter : public QSyntaxHighlighter {
+    Q_OBJECT
+protected:
+    void highlightBlock(const QString &text);
+public:
+    void* mparserEvent;                      // Указатель на обработчик
+
+    zQSyntaxHighlighter(QTextDocument *parent = 0);
+    void setFormatFont(int start, int count, QFont *font);
+    void setFormatColor(int start, int count, QColor *color);
+};
+#pragma pack(pop)
+
 #endif // QTE_H
 
 
