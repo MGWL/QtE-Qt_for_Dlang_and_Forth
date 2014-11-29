@@ -1,5 +1,5 @@
 // Written in the D programming language. Мохов Геннадий Владимирович 2013
-// Версия v1.002
+// Версия v1.7
 /**
   * <b><u>Работа с Qt в Windows 32 и Linux 32 и 64. </u></b>
   *  <br>Зависит от QtE.DLL  (Win32)   или  QtE.so.1.0.0 (Linux32, Linux64)
@@ -17,27 +17,36 @@
   *   <br>Подключить и использовать небольшое подмножество Qt из D.
   * 	  <br>Где возможно, обращается сразу в Qt, где нет в QtE.dll
   *    <br><code>
-  *             main.d ---> lib_qt.d ----> QtE.dll  ----> ( QtGui.dll, QtCore.dll )
-  *   <br>или main.d ---> lib_qt.d --------------------> ( QtGui.dll, QtCore.dll )
+  *             main.d ---> qte.d ----> QtE.dll  ----> ( QtGui.dll, QtCore.dll )
+  *   <br>или main.d ---> qte.d --------------------> ( QtGui.dll, QtCore.dll )
   *    </code>
   */
  /++
  + Example:
- + ---
- + import lib_qt;
+ + -------
+ + import core.runtime; // Обработка входных параметров 
+ + import qte; // Работа с Qt
+ + class Exam: QMainWindow {
+ +      this() {
+ +         super();
+ +     }
+ + }
  + int main(string[] args) {
- + {
- +    /* Цепляем библиотеки QtCore, QtGui, QtE. */
- +     int rez = LoadQt(); if (rez==1) return 1;  // Ошибка загрузки библиотеки
- +	  // Изврат связанный с тем, что  вызов конструктора QApplication 
- +	  // должен быть произведен в main() 
- +	  (app.adrQApplication())(cast(void*)app.bufObj, &Runtime.cArgs.argc, Runtime.cArgs.argv);
- +    // Создать окно, изм размер и отобразить
- +	   gWidget w2 = new gWidget(null, 0); w2.resize(400, 50); w2.show();
- +    // Ждать и обрабатывать графические события
+ +     QApplication app; 
+ + 
+ +     // Проверим режим загрузки. Если есть '--debug' старт в отладочном режиме
+ +     bool fDebug; foreach (arg; args) { if (arg=="--debug") fDebug = true; }
+ +     // Загрузка графической библиотеки
+ +     if(1==LoadQt( dll.Core | dll.Gui | dll.QtE, fDebug)) return 1; // Ошибка загрузки библиотеки
+ +     app = new QApplication(&Runtime.cArgs.argc, Runtime.cArgs.argv, 1); 
+ +     // —--------------------------------
+ +     Exam ex = new Exam();
+ +     ex.show();
+ +     //  ...
+ +     // —--------------------------------
  +     return app.exec();
  + }
- + ---
+ + --------
  +/  
 module qte;
 import std.c.stdio;
@@ -55,10 +64,11 @@ version(linux) {
 }
 
 int verQtEu = 1;
-int verQtEl = 5;  // ver 1.1  64 разрядов на Linux
+int verQtEl = 7;  // ver 1.1  64 разрядов на Linux
                   // ver 1.2  изменен eSlot + хранение ID (N) 
                   // ver 1.3  изменена иерархия классов, добавлен QTextStream
                   // ver 1.5  QApplication из Lazarus
+                  // ver 1.7  Изменен начальный старт
 
 alias int  PTRINT;
 alias uint PTRUINT;
@@ -843,6 +853,11 @@ int LoadQt(dll ldll, bool showError) {   ///  Загрузить DLL-ки Qt и 
     pFunQt[326] = GetPrAddres(bGui, hQtGui, "_ZN7QWidget20setContextMenuPolicyEN2Qt17ContextMenuPolicyE"); if (!pFunQt[326]) MessageErrorLoad(showError, "QWidget::setContextMenuPolicy(Qt::ContextMenuPolicy)"w, 2);
 // ============ QLCDnumber ===============
     pFunQt[327] = GetPrAddres(bGui, hQtGui, "_ZN10QLCDNumber7displayEi"); if (!pFunQt[327]) MessageErrorLoad(showError, "QLCDNumber::display(int)"w, 2);
+    
+    pFunQt[328] = GetPrAddres(bGui, hQtGui, "_ZN8QToolBar9addWidgetEP7QWidget"); if (!pFunQt[328]) MessageErrorLoad(showError, "QToolBar::addWidget(QWidget*)"w, 2);
+// ============ QPlaintTextEdit ===============
+    pFunQt[329] = GetPrAddres(bGui, hQtGui, "_ZN14QPlainTextEdit5clearEv"); if (!pFunQt[329]) MessageErrorLoad(showError, "QPlainTextEdit::clear()"w, 2);
+    pFunQt[330] = GetPrAddres(bGui, hQtGui, "_ZN14QPlainTextEdit15appendPlainTextERK7QString"); if (!pFunQt[330]) MessageErrorLoad(showError, "QPlainTextEdit::appendPlainText(QString const&)"w, 2);
     
     return 0;
 } ///  Загрузить DLL-ки Qt и QtE. Найти в них адреса функций и заполнить ими таблицу
@@ -1794,6 +1809,9 @@ class QPlainTextEdit: gWidget {
         // В Linux валится по ошибке фрагментации
         // (cast(t_v__vp)pFunQt[301])(QtObj);
     }
+    void appendPlainText(QString qs) {
+        (cast(t_v__vp_vp)pFunQt[330])(QtObj, qs.QtObj);
+    } /// Дописывает в конец текст простой текст	
     void appendHtml(QString qs) {
         (cast(t_v__vp_vp)pFunQt[302])(QtObj, qs.QtObj);
     } /// Дописывает в конец текст отформатированный тегами HTML	
@@ -1816,6 +1834,9 @@ class QPlainTextEdit: gWidget {
     void* document() {
         return (cast(t_vp__vp)pFunQt[318])(QtObj);
     } /// Получить ссылку на QTextDocument
+    void clear() {
+        (cast(t_v__vp)pFunQt[329])(QtObj);
+    } /// Очистить всё
 }
 // ================ QTextEdit ================
 /++
@@ -3027,6 +3048,9 @@ class QToolBar: gWidget {
 	void addAction(QAction ac) {
 	    (cast(t_v__vp_vp)pFunQt[309])(QtObj, ac.QtObj);
 	} /// Вставить Action
+	void addWidget(gWidget wd) {
+	    (cast(t_v__vp_vp)pFunQt[328])(QtObj, wd.QtObj);
+	} /// Добавить виджет в QToolBar
 }
 // ================ QIcon ================
 class QIcon: QObject {
