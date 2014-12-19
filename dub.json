@@ -1,0 +1,15 @@
+{
+	"name": "inst_qte",
+	"description": "Program for install QtE library.",
+	"copyright": "Copyright © 2014, MGW",
+	"homepage": "http://qte.ucoz.ru",
+	"authors": ["MGW - Mohov Gennady Vladimirovich"],
+	"configurations" : [
+		{
+			"name": "inst_qte",
+            "targetType": "executable",
+            "sourcePaths": [ "./source" ],
+			"libs": [ "dl", "curl"]
+		}
+	]
+}
