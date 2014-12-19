@@ -1,9 +1,8 @@
 // Written in the D programming language. Мохов Геннадий Владимирович 2013
-// Версия v1.7
 /**
   * <b><u>Работа с Qt в Windows 32 и Linux 32 и 64. </u></b>
-  *  <br>Зависит от QtE.DLL  (Win32)   или  QtE.so.1.0.0 (Linux32, Linux64)
-  *  Version: 1.0a
+  *  <br>Зависит от QtE.DLL  (Win32, Win64)   или  QtE.so (Linux32, Linux64)
+  *  Version: 1.7
   *  Authors: Мохов Г.В.  mgw@yandex.ru ( MGW 02.08.2013 23:37:57  )
   *  Date: Июль 30, 2013
   *   http: mgw.narod.ru
@@ -17,8 +16,8 @@
   *   <br>Подключить и использовать небольшое подмножество Qt из D.
   * 	  <br>Где возможно, обращается сразу в Qt, где нет в QtE.dll
   *    <br><code>
-  *             main.d ---> qte.d ----> QtE.dll  ----> ( QtGui.dll, QtCore.dll )
-  *   <br>или main.d ---> qte.d --------------------> ( QtGui.dll, QtCore.dll )
+  *             main.d ---> lib_qt.d ----> QtE.dll  ----> ( QtGui.dll, QtCore.dll )
+  *   <br>или main.d ---> lib_qt.d --------------------> ( QtGui.dll, QtCore.dll )
   *    </code>
   */
  /++
@@ -375,8 +374,8 @@ int LoadQt(dll ldll, bool showError) {   ///  Загрузить DLL-ки Qt и 
 		wQtCore = "QtCore4.dll"; wQtGui = "QtGui4.dll"; wQtE = "QtE.dll"; wQtScript = "QtScript4.dll"; wQtWeb = "QtWebKit4.dll"; wQtNet = "QtNetwork4.dll";
 	}
 	 version(linux) {
-		cQtCore = "libQtCore.so.4"; cQtGui = "libQtGui.so.4"; cQtE = "QtE.so.1.0.0"; cQtScript = "libQtScript.so.4"; cQtWeb = "libQtWebKit.so.4"; cQtNet = "libQtNetwork.so.4";
-		wQtCore = "libQtCore.so.4"; wQtGui = "libQtGui.so.4"; wQtE = "QtE.so.1.0.0"; wQtScript = "libQtScript.so.4"; wQtWeb = "libQtWebKit.so.4"; wQtNet = "libQtNetwork.so.4";
+		cQtCore = "libQtCore.so.4"; cQtGui = "libQtGui.so.4"; cQtE = "QtE.so"; cQtScript = "libQtScript.so.4"; cQtWeb = "libQtWebKit.so.4"; cQtNet = "libQtNetwork.so.4";
+		wQtCore = "libQtCore.so.4"; wQtGui = "libQtGui.so.4"; wQtE = "QtE.so"; wQtScript = "libQtScript.so.4"; wQtWeb = "libQtWebKit.so.4"; wQtNet = "libQtNetwork.so.4";
 	}
 	const QtCore   = cast(char*)cQtCore;
 	const QtGui    = cast(char*)cQtGui;
