@@ -21,6 +21,8 @@ Compile Linux:
 
 Home page: http://qte.ucoz.ru
 
+<b>Important!</b> For detailed explanations and receptions of the newest versions write to mgw@yandex.ru
+
 This link:
 http://yadi.sk/d/l4rd7-QPHdpHM
 will help you can upload a set of ready DLL (so) to test the QtE. The archive contains the minimum set of ready files for Qt and QtE for Windows 32 and Linux 32. This will allow you to test QtE without installing Qt on your PC. Just copy the DLL (so) in your directory dmd/windows/bin or dmd/linux/bin32 and work with QtE.
