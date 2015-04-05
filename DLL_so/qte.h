@@ -1,5 +1,5 @@
 // +----------------------------------------------------------------+
-// | Проект QtE (wrapping QT for SPF and D)                               |
+// | Проект QtE (wrapping QT for SPF and D)                         |
 // | MGW,  22.07.13 14:12                                           |
 // +----------------------------------------------------------------+
 
@@ -27,6 +27,7 @@
   #include <QtNetwork/QTcpSocket>
   #include <QList>
   #include <QFileDialog>
+  #include <QtNetwork/QHttp>
 // /usr/include/QtNetwork
 #endif
 
@@ -68,6 +69,7 @@
   #include <QtWebKit\QWebView>
   #include <QtNetwork\QTcpSocket>
   #include <QtNetwork\QAbstractSocket>
+  #include <QtNetwork\QHttp>
   #include <QtGui\QDialog>
   #include <QtGui\QDialogButtonBox>
   #include <QtGui\QTextCursor>
