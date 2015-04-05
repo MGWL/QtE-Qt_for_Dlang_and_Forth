@@ -1017,6 +1017,32 @@ extern "C" void QT_QIcon_addFile(QIcon *pm, QString *file) {
 extern "C" void* QT_QDateEditNEW1(QWidget* parent) {
     return new QDateEdit(parent);
 }
+// ================= QNetworkAccessManager =====================
+extern "C" void* QT_QNetworkAccessManagerNEW1(QObject* parent) {
+    return new QNetworkAccessManager(parent);
+}
+// ============ QHttp ===============
+extern "C" void* QT_QHttp_NEW1(QObject* parent) {
+    return new QHttp(parent);
+}
+extern "C" int QT_QHttp_setHost(QHttp *http, QString *hostName, int mode, int port) {
+    if(mode==0) {
+        return http->setHost(*hostName, QHttp::ConnectionModeHttp, port);
+    }
+    if(mode==1) {
+        return http->setHost(*hostName, QHttp::ConnectionModeHttps, port);
+    }
+}
+extern "C" int QT_QHttp_get(QHttp *http, QString *hostName, QIODevice *dev) {
+    return http->get(*hostName, dev);
+}
+extern "C" void* QT_QHttp_readAll(QHttp *http, QByteArray *ba) {
+    QByteArray bb = http->readAll();
+    // printf("--> %s", (char*)bb.data());
+    *ba = bb;
+
+    return (void*)ba;
+}
 
 
 // ============ ВНИМАНИЕ - эксперементльный и функции ========
