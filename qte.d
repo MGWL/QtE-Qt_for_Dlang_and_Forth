@@ -1,16 +1,16 @@
 // Written in the D programming language. Мохов Геннадий Владимирович 2013
+// Версия v1.8 - 29.03.15 17:56
 /**
   * <b><u>Работа с Qt в Windows 32 и Linux 32 и 64. </u></b>
-  *  <br>Зависит от QtE.DLL  (Win32, Win64)   или  QtE.so (Linux32, Linux64)
-  *  Version: 1.7
+  *  <br>Зависит от QtE.DLL  (Win32)   или  QtE.so.1.0.0 (Linux32, Linux64)
   *  Authors: Мохов Г.В.  mgw@yandex.ru ( MGW 02.08.2013 23:37:57  )
   *  Date: Июль 30, 2013
   *   http: mgw.narod.ru
   *   License: use freely for any purpose
   *
   *   <b><u>Компиляция:</u></b>
-  *   <br>Windows 32: dmd main.d qte.d -L/SUBSYSTEM:WINDOWS:5.01
-  *   <br>Linux 32: dmd main.d qte.d -L-ldl
+  *   <br>Windows 32: dmd main qte -L/SUBSYSTEM:WINDOWS:5.01
+  *   <br>Linux 32: dmd main qte -L-ldl
   *
   *   <b><u>Алгоритм:</u></b>
   *   <br>Подключить и использовать небольшое подмножество Qt из D.
@@ -63,11 +63,13 @@ version(linux) {
 }
 
 int verQtEu = 1;
-int verQtEl = 7;  // ver 1.1  64 разрядов на Linux
+int verQtEl = 8;  // ver 1.1  64 разрядов на Linux
                   // ver 1.2  изменен eSlot + хранение ID (N) 
                   // ver 1.3  изменена иерархия классов, добавлен QTextStream
                   // ver 1.5  QApplication из Lazarus
                   // ver 1.7  Изменен начальный старт
+                  // ver 1.8  Изменен порядок загрузки DLL для обнаружения отсутствия Qt* dll [13.03.2015 13:56:19]
+string verQtEd = "13.03.2015 14:04:06";
 
 alias int  PTRINT;
 alias uint PTRUINT;
@@ -80,7 +82,7 @@ enum dll {
         Core = 0x1, Gui = 0x2, QtE = 0x4, Script = 0x8, Web = 0x16, Net = 0x32
     } /// Загрузка DLL. Необходимо выбрать какие грузить. Load DLL, we mast change load
 
-public void* pFunQt[400];   /// Масив указателей на функции из DLL
+public void*[400] pFunQt;   /// Масив указателей на функции из DLL
 
 immutable int QMETHOD =  0;                        // member type codes
 immutable int QSLOT  = 1;
@@ -139,6 +141,7 @@ private extern (C) alias int   function(void*, bool*, int)                  t_i_
 private extern (C) alias void* function(void*, int, void*, int)           	t_vp__vp_i_vp_i;
 private extern (C) alias void* function(void*, int, int, void*)           	t_vp__vp_i_i_vp;
 private extern (C) alias void* function(void*, void*, int, int)             t_vp__vp_vp_i_i;
+private extern (C) alias int function(void*, void*, int, int)             t_i__vp_vp_i_i;
 
 private extern (C) alias void* function(void*, void*, ushort, int)           t_vp__vp_vp_us_i;
 private extern (C) alias void  function(void*, void*, ushort, int)           t_v__vp_vp_us_i;
@@ -314,6 +317,11 @@ static void msgbox(QString text = null, QString caption = null, QMessageBox.Icon
     }
 }
 
+// Показать окно об QtE
+static void aboutQtE() {
+    string str = r"<h3>Ver " ~ to!string(verQtEu) ~ "." ~ to!string(verQtEl) ~  " </h3><br><br>" ~ verQtEd;
+    msgbox(str, "about QtE");
+}
 // Загрузить DLL. Load DLL (.so)
 private void* GetHlib(const char* name) {
 	version(Windows) {
@@ -370,12 +378,12 @@ int LoadQt(dll ldll, bool showError) {   ///  Загрузить DLL-ки Qt и 
 	bool bCore; bool bGui; bool bQtE; bool bScript; bool bWeb; bool bNet;
 	
 	version(Windows) {
-		cQtCore = "QtCore4.dll"; cQtGui = "QtGui4.dll"; cQtE = "QtE.dll"; cQtScript = "QtScript4.dll"; cQtWeb = "QtWebKit4.dll"; cQtNet = "QtNetwork4.dll";
-		wQtCore = "QtCore4.dll"; wQtGui = "QtGui4.dll"; wQtE = "QtE.dll"; wQtScript = "QtScript4.dll"; wQtWeb = "QtWebKit4.dll"; wQtNet = "QtNetwork4.dll";
+		cQtCore = "QtCore4.dll"; cQtGui = "QtGui4.dll"; cQtE = "QtE4.dll"; cQtScript = "QtScript4.dll"; cQtWeb = "QtWebKit4.dll"; cQtNet = "QtNetwork4.dll";
+		wQtCore = "QtCore4.dll"; wQtGui = "QtGui4.dll"; wQtE = "QtE4.dll"; wQtScript = "QtScript4.dll"; wQtWeb = "QtWebKit4.dll"; wQtNet = "QtNetwork4.dll";
 	}
 	 version(linux) {
-		cQtCore = "libQtCore.so.4"; cQtGui = "libQtGui.so.4"; cQtE = "QtE.so"; cQtScript = "libQtScript.so.4"; cQtWeb = "libQtWebKit.so.4"; cQtNet = "libQtNetwork.so.4";
-		wQtCore = "libQtCore.so.4"; wQtGui = "libQtGui.so.4"; wQtE = "QtE.so"; wQtScript = "libQtScript.so.4"; wQtWeb = "libQtWebKit.so.4"; wQtNet = "libQtNetwork.so.4";
+		cQtCore = "libQtCore.so.4"; cQtGui = "libQtGui.so.4"; cQtE = "QtE.so.4"; cQtScript = "libQtScript.so.4"; cQtWeb = "libQtWebKit.so.4"; cQtNet = "libQtNetwork.so.4";
+		wQtCore = "libQtCore.so.4"; wQtGui = "libQtGui.so.4"; wQtE = "QtE.so.4"; wQtScript = "libQtScript.so.4"; wQtWeb = "libQtWebKit.so.4"; wQtNet = "libQtNetwork.so.4";
 	}
 	const QtCore   = cast(char*)cQtCore;
 	const QtGui    = cast(char*)cQtGui;
@@ -390,10 +398,11 @@ int LoadQt(dll ldll, bool showError) {   ///  Загрузить DLL-ки Qt и 
     // Load library in memory
     if (bCore)   {	hQtCore   = GetHlib(QtCore);   if (!hQtCore) { MessageErrorLoad(showError, wQtCore, 1);     return 1; } }
     if (bGui)    {	hQtGui    = GetHlib(QtGui);    if (!hQtGui)  { MessageErrorLoad(showError, wQtGui, 1);      return 1; } }
-    if (bQtE)    {	hQtE      = GetHlib(QtE);      if (!hQtE)    { MessageErrorLoad(showError, wQtE, 1);        return 1; } }
     if (bScript) {  hQtScript = GetHlib(QtScript); if (!hQtScript) { MessageErrorLoad(showError, wQtScript, 1); return 1; } }
     if (bWeb)    {  hQtWeb    = GetHlib(QtWeb);    if (!hQtWeb) { MessageErrorLoad(showError, wQtWeb, 1);       return 1; } }
     if (bNet)    {  hQtNet    = GetHlib(QtNet);    if (!hQtNet) { MessageErrorLoad(showError, wQtNet, 1);       return 1; } }
+    // Изменен порядок загрузки. QtE последний, т.к. он зависим от предыдущих Qt*
+    if (bQtE)    {	hQtE      = GetHlib(QtE);      if (!hQtE)    { MessageErrorLoad(showError, wQtE, 1);        return 1; } }
 	
 	// +++ Проверка Lazarus
 	pFunQt[98] = GetPrAddres(bQtE, hQtE, "QApplication_create"); if (!pFunQt[98]) MessageErrorLoad(showError, "QApplication_create"w, 2);
@@ -857,6 +866,13 @@ int LoadQt(dll ldll, bool showError) {   ///  Загрузить DLL-ки Qt и 
 // ============ QPlaintTextEdit ===============
     pFunQt[329] = GetPrAddres(bGui, hQtGui, "_ZN14QPlainTextEdit5clearEv"); if (!pFunQt[329]) MessageErrorLoad(showError, "QPlainTextEdit::clear()"w, 2);
     pFunQt[330] = GetPrAddres(bGui, hQtGui, "_ZN14QPlainTextEdit15appendPlainTextERK7QString"); if (!pFunQt[330]) MessageErrorLoad(showError, "QPlainTextEdit::appendPlainText(QString const&)"w, 2);
+// ============ QNetworkAccessManager ===============
+    pFunQt[331] = GetPrAddres(bQtE, hQtE, "QT_QNetworkAccessManagerNEW1"); if (!pFunQt[331]) MessageErrorLoad(showError, "QNetworkAccessManager::QNetworkAccessManager ( QObject * parent)"w, 2);
+// ============ QHttp ===============
+    pFunQt[332] = GetPrAddres(bQtE, hQtE, "QT_QHttp_NEW1"); if (!pFunQt[332]) MessageErrorLoad(showError, "QHttp::QHttp(QObject *parent = 0 )"w, 2);
+    pFunQt[333] = GetPrAddres(bQtE, hQtE, "QT_QHttp_setHost"); if (!pFunQt[333]) MessageErrorLoad(showError, "QHttp::QT_QHttp_setHost"w, 2);
+    pFunQt[334] = GetPrAddres(bQtE, hQtE, "QT_QHttp_get"); if (!pFunQt[334]) MessageErrorLoad(showError, "QHttp::QT_QHttp_get"w, 2);
+    pFunQt[335] = GetPrAddres(bQtE, hQtE, "QT_QHttp_readAll"); if (!pFunQt[335]) MessageErrorLoad(showError, "QHttp::QT_QHttp_readAll"w, 2);
     
     return 0;
 } ///  Загрузить DLL-ки Qt и QtE. Найти в них адреса функций и заполнить ими таблицу
@@ -1262,7 +1278,7 @@ class QTextCodec {
 	<br>(см. выше), иначе в Linux ошибка --> Segn... fault.
 +/		
 class QApplication: QObject {
-	size_t bufObj[2];     // данные объекта, 8=w32, 16=w64
+	size_t[2] bufObj;     // данные объекта, 8=w32, 16=w64
 	this() {
 		super(); p_QObject = &bufObj;
     } /// При создании QApplication адрес объекта C++, сохранить в QObject
@@ -1740,7 +1756,7 @@ class QString: QObject {
 	}
     string fromUnicode(string s, QTextCodec codec) {
 	    if(size()==0) { s=""; return s; }
-        char m[]; m.length = 4*size(); (cast(t_i__vp_vp_vp)pFunQt[68])(p_QObject, cast(char*)m.ptr, codec.QtObj);
+        char[] m; m.length = 4*size(); (cast(t_i__vp_vp_vp)pFunQt[68])(p_QObject, cast(char*)m.ptr, codec.QtObj);
         s = to!string(cast(char*)m.ptr);
         return s;
     } /// Записать в QByteArray из QString с использованием QTextCodec. Write to string from QString with QTextCodec.
@@ -3102,6 +3118,31 @@ class QDateEdit: gWidget {
 			p_QObject = (cast(t_vp__vp)pFunQt[322])(null);
 		}
 	} /// Создать QToolBox
+}
+// ================ QNetworkAccessManager ================
+class QNetworkAccessManager: QObject {
+	this(void* adrDocument) {
+		super(); p_QObject = (cast(t_vp__vp)pFunQt[331])(adrDocument);
+    }
+}
+// ================ QHttp ================
+class QHttp: QObject {
+	this(QObject obj) {
+		super(); p_QObject = (cast(t_vp__vp)pFunQt[332])(obj.QtObj);
+    }
+	// Установить имя хоста
+	int setHost(QString hostName, int mode, int port) {
+		return (cast(t_i__vp_vp_i_i)pFunQt[333])(QtObj, hostName.QtObj, mode, port);
+	}
+	// Запрос GET
+	int get(QString fileName, QIODevice dev) {
+		return (cast(t_i__vp_vp_vp)pFunQt[334])(QtObj, fileName.QtObj, dev.QtObj);
+	}
+	// Прочитать всё
+	QByteArray readAll(QByteArray ba) {
+		(cast(t_vp__vp_vp)pFunQt[335])(QtObj, ba.QtObj);
+		return ba;
+	}
 }
 
 // ============ Эксперементальный класс DQByteArray == Работа с объектом С++ без компилятора ===============
