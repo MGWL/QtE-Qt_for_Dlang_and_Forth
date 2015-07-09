@@ -55,6 +55,8 @@ int main(string[] args) {
 	// Изврат связанный с тем, что  вызов конструктора QApplication
 	// должен быть произведен в main(), иначе в Linux ошибка ....
 	(app.adrQApplication())(cast(void*)app.bufObj, &Runtime.cArgs.argc, Runtime.cArgs.argv, true);
+        gWidget w1 = new gWidget(null, 0);
+        w1.show();
 
 	// Создаём основное окно приложения
 	GenaMainWin genaMain = new GenaMainWin();
