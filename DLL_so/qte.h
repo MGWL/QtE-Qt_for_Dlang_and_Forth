@@ -1,5 +1,5 @@
 // +----------------------------------------------------------------+
-// | ������ QtE (wrapping QT for SPF and D)                               |
+// | Проект QtE (wrapping QT for SPF and D)                         |
 // | MGW,  22.07.13 14:12                                           |
 // +----------------------------------------------------------------+
 
@@ -8,9 +8,9 @@
 #define QTE_H
 
 // For compile in Windows define WINDOWF, disable LINUXF
-// #define WINDOWSF
+#define WINDOWSF
 // For compile in Linux define LINUXF, disable WINDOWF
-#define LINUXF
+// #define LINUXF
 
 #ifdef LINUXF
   #include <QApplication>
@@ -27,6 +27,7 @@
   #include <QtNetwork/QTcpSocket>
   #include <QList>
   #include <QFileDialog>
+  #include <QTableView>
   #include <QtNetwork/QHttp>
 // /usr/include/QtNetwork
 #endif
@@ -69,6 +70,7 @@
   #include <QtWebKit\QWebView>
   #include <QtNetwork\QTcpSocket>
   #include <QtNetwork\QAbstractSocket>
+  #include <QtNetwork\QHttp>
   #include <QtGui\QDialog>
   #include <QtGui\QDialogButtonBox>
   #include <QtGui\QTextCursor>
@@ -76,24 +78,27 @@
   #include <QtGui\QSyntaxHighlighter>
   #include <QtGui\QToolBar>
   #include <QtGui\QDateEdit>
+  #include <QtGui\QAbstractItemView>
+  #include <QtGui\QTableView>
+  #include <QtGui\QTableWidget>
 #endif
 
 #define FQT_API QTESHARED_EXPORT
 
-typedef void (*ExecZIM_1_0)( void* );    //  ���������  ���  ��� ���������� �������
+typedef void (*ExecZIM_1_0)( void* );    //  определим  тип  для вызываемой функции
 typedef void (*ExecZIM_0_0)( void  );
-typedef void (*ExecZIM_v__i)( int );    //  ���������  ���  ��� ���������� �������
-typedef void (*ExecZIM_2_0)( void*, void* );    //  ���������  ���  ��� ���������� �������
+typedef void (*ExecZIM_v__i)( int );    //  определим  тип  для вызываемой функции
+typedef void (*ExecZIM_2_0)( void*, void* );    //  определим  тип  для вызываемой функции
 
 class eSlot : public QObject
 {
     Q_OBJECT
 public:
-    void* aSlot0;       // ������ ����� D �������
-    void* aSlot1;       // ������ ����� D �������
-    void* aSlotN;       // ������ ����� D ������� ��� ������ � ����������
-    int        N;       // �������� ��� aSlotN. ���� ��������� �������� ��� ��������� ����� � ������ 
-                        // ��� ������������ �����. � �� - ��������������
+    void* aSlot0;       // Хранит адрес D функции
+    void* aSlot1;       // Хранит адрес D функции
+    void* aSlotN;       // Хранит адрес D функции для вызова с параметром
+    int        N;       // параметр для aSlotN. Идея запомнить параметр при установке слота и выдать 
+                        // при срабатывании слота. А ля - диспечерезация
     // -----------------------------------
     eSlot(QObject* parent = 0);
     ~eSlot();
@@ -219,7 +224,7 @@ class zQSyntaxHighlighter : public QSyntaxHighlighter {
 protected:
     void highlightBlock(const QString &text);
 public:
-    void* mparserEvent;                      // ��������� �� ����������
+    void* mparserEvent;                      // Указатель на обработчик
 
     zQSyntaxHighlighter(QTextDocument *parent = 0);
     void setFormatFont(int start, int count, QFont *font);

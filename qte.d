@@ -130,6 +130,7 @@ private extern (C) alias void* function(void*, void*, int)                  t_vp
 private extern (C) alias void* function(int, int)  		                    t_vp__i_i;
 private extern (C) alias void* function(int, int, int, int)  		        t_vp__i_i_i_i;
 
+private extern (C) alias void  function(void*, int, bool)  					t_v__vp_i_bool;
 private extern (C) alias void  function(void*, int, int, int, int)  		t_v__vp_i_i_i_i;
 private extern (C) alias void  function(void*, int, int, void*)     		t_v__vp_i_i_vp;
 private extern (C) alias void  function(int, void*, void*)          		t_v__i_vp_vp;
@@ -672,6 +673,39 @@ int LoadQt(dll ldll, bool showError) {   ///  Загрузить DLL-ки Qt и 
 
 	pFunQt[170] = GetPrAddres(bQtE, hQtE, "eSlot_setSlotN"); if (!pFunQt[170]) MessageErrorLoad(showError, "eSlot_setSlotN"w, 2);
     pFunQt[171] = GetPrAddres(bGui, hQtGui, "_ZN7QWidget10setEnabledEb"); if (!pFunQt[171]) MessageErrorLoad(showError, "QWidget::setEnabled(bool)"w, 2);
+// ============ QTableView =======================================
+    pFunQt[339] = GetPrAddres(bQtE, hQtE,   "QT_QTableViewNEW"); if (!pFunQt[339]) MessageErrorLoad(showError, "QT_QTableViewNEW(QWidget* parent)"w, 2);
+    pFunQt[340] = GetPrAddres(bQtE, hQtE,   "QT_QTableViewDELETE"); if (!pFunQt[340]) MessageErrorLoad(showError, "QT_QTableViewDELETE"w, 2);
+// ============ QTableWidget =======================================
+    pFunQt[341] = GetPrAddres(bQtE, hQtE,   "QT_QTableWidgetNEW"); if (!pFunQt[341]) MessageErrorLoad(showError, "QT_QTableWidgetNEW(QWidget* parent)"w, 2);
+    pFunQt[342] = GetPrAddres(bQtE, hQtE,   "QT_QTableWidgetDELETE"); if (!pFunQt[342]) MessageErrorLoad(showError, "QT_QTableWidgetDELETE"w, 2);
+
+    pFunQt[343] = GetPrAddres(bGui, hQtGui, "_ZN12QTableWidget11setRowCountEi"); if (!pFunQt[343]) MessageErrorLoad(showError, "QTableWidget::setRowCount(int"w, 2);
+    pFunQt[344] = GetPrAddres(bGui, hQtGui, "_ZN12QTableWidget14setColumnCountEi"); if (!pFunQt[344]) MessageErrorLoad(showError, "QTableWidget::setColumnCount(int)"w, 2);
+    pFunQt[345] = GetPrAddres(bQtE, hQtE,   "QT_QTableWidget_cellWidget"); if (!pFunQt[345]) MessageErrorLoad(showError, "QTableWidget::cellWidget(int row, int col)"w, 2);
+
+    pFunQt[346] = GetPrAddres(bQtE, hQtE,   "QT_QTableWidgetItemNEW"); if (!pFunQt[346]) MessageErrorLoad(showError, "QT_QTableWidgetItemNEW"w, 2);
+    pFunQt[347] = GetPrAddres(bQtE, hQtE,   "QT_QTableWidgetItemDELETE"); if (!pFunQt[347]) MessageErrorLoad(showError, "QT_QTableWidgetItemDELETE"w, 2);
+
+    pFunQt[348] = GetPrAddres(bQtE, hQtE,   "QT_QTableWidget_setItem"); if (!pFunQt[348]) MessageErrorLoad(showError, "QT_QTableWidget_setItem"w, 2);
+    pFunQt[349] = GetPrAddres(bQtE, hQtE,   "QT_QTableWidgetItemNEWqs"); if (!pFunQt[349]) MessageErrorLoad(showError, "QT_QTableWidgetItemNEWqs"w, 2);
+    pFunQt[350] = GetPrAddres(bGui, hQtGui, "_ZN12QTableWidget12insertColumnEi"); if (!pFunQt[350]) MessageErrorLoad(showError, "void QTableWidget::insertColumn ( int column ) [slot]"w, 2);
+    pFunQt[351] = GetPrAddres(bGui, hQtGui, "_ZN12QTableWidget9insertRowEi"); if (!pFunQt[351]) MessageErrorLoad(showError, "void QTableWidget::insertRow ( int row ) [slot]", 2);
+    pFunQt[352] = GetPrAddres(bGui, hQtGui, "_ZNK12QTableWidget10currentRowEv"); if (!pFunQt[352]) MessageErrorLoad(showError, "int QTableWidget::currentRow () const", 2);
+    pFunQt[353] = GetPrAddres(bGui, hQtGui, "_ZNK12QTableWidget11columnCountEv"); if (!pFunQt[353]) MessageErrorLoad(showError, "int columnCount() const", 2);
+
+    pFunQt[358] = GetPrAddres(bGui, hQtGui, "_ZN12QTableWidget5clearEv"); if (!pFunQt[358]) MessageErrorLoad(showError, "void QTableWidget::clear() [slot]", 2);
+    pFunQt[359] = GetPrAddres(bGui, hQtGui, "_ZN12QTableWidget13clearContentsEv"); if (!pFunQt[359]) MessageErrorLoad(showError, "void QTableWidget::clearContents() [slot]", 2);
+// ============ QTableView =======================================
+    pFunQt[354] = GetPrAddres(bGui, hQtGui, "_ZN10QTableView14setColumnWidthEii"); if (!pFunQt[354]) MessageErrorLoad(showError, "void QTableView::setColumnWidth(int column, int width)", 2);
+    pFunQt[355] = GetPrAddres(bGui, hQtGui, "_ZN10QTableView12setRowHeightEii"); if (!pFunQt[355]) MessageErrorLoad(showError, "void QTableView::setRowHeight ( int row, int height )", 2);
+    pFunQt[356] = GetPrAddres(bGui, hQtGui, "_ZN10QTableView12setRowHiddenEib"); if (!pFunQt[356]) MessageErrorLoad(showError, "void QTableView::setRowHidden( int row, bool hide)", 2);
+    pFunQt[357] = GetPrAddres(bGui, hQtGui, "_ZN10QTableView15setColumnHiddenEib"); if (!pFunQt[357]) MessageErrorLoad(showError, "void QTableView::setColumnHidden(int column, bool hide)", 2);
+
+    pFunQt[360] = GetPrAddres(bQtE, hQtE,   "QT_QTableWidget_setTextAligment"); if (!pFunQt[360]) MessageErrorLoad(showError, "QT_QTableWidget_setTextAligment"w, 2);
+    pFunQt[361] = GetPrAddres(bQtE, hQtE,   "QT_QTableWidget_stringFromCell"); if (!pFunQt[361]) MessageErrorLoad(showError, "QT_QTableWidget_stringFromCell"w, 2);
+
+
 // ============ setToolTip =======================================
     pFunQt[172] = GetPrAddres(bGui, hQtGui, "_ZN7QWidget10setToolTipERK7QString"); if (!pFunQt[172]) MessageErrorLoad(showError, "QWidget::setToolTip(QString const&)"w, 2);
     pFunQt[173] = GetPrAddres(bGui, hQtGui, "_ZN7QAction10setToolTipERK7QString"); if (!pFunQt[173]) MessageErrorLoad(showError, "QAction::setToolTip(QString const&)"w, 2);
@@ -1419,6 +1453,146 @@ class QFrame: gWidget {
         (cast(t_v__vp_i)pFunQt[276])(QtObj, sh);
     } /// Установить толщину окантовки в пикселах от 0 до 3
 }
+// ================ QAbstractScrollArea ================
+class QAbstractScrollArea: QFrame {
+   ~this() {
+        p_QObject = null;
+    }
+	this() {
+        super();  //  Это заглушка, что бы наследовать D класс не создавая экземпляра в Qt C++
+        // p_QObject = (cast(t_vp__vp_i)pFunQt[274])(null, QtE.WindowType.Widget);
+	}  /// Конструктор
+	this(gWidget parent, QtE.WindowType fl = QtE.WindowType.Widget) {
+        super(parent, fl);  //  Это заглушка, что бы наследовать D класс не создавая экземпляра в Qt C++
+        //if (parent) {
+            // p_QObject = (cast(t_vp__vp_i)pFunQt[274])(parent.p_QObject, fl);
+        // }
+        // else {
+            // p_QObject = (cast(t_vp__vp_i)pFunQt[274])(null, 0);
+        // }
+	}  /// Конструктор
+
+}
+// ================ QAbstractScrollArea ================
+class QAbstractItemView: QAbstractScrollArea {
+   ~this() {
+        p_QObject = null;
+    }
+	this() {
+        super();  //  Это заглушка, что бы наследовать D класс не создавая экземпляра в Qt C++
+        // p_QObject = (cast(t_vp__vp_i)pFunQt[274])(null, QtE.WindowType.Widget);
+	}  /// Конструктор
+	this(gWidget parent, QtE.WindowType fl = QtE.WindowType.Widget) {
+        super(parent, fl);  //  Это заглушка, что бы наследовать D класс не создавая экземпляра в Qt C++
+        //if (parent) {
+            // p_QObject = (cast(t_vp__vp_i)pFunQt[274])(parent.p_QObject, fl);
+        // }
+        // else {
+            // p_QObject = (cast(t_vp__vp_i)pFunQt[274])(null, 0);
+        // }
+	}  /// Конструктор
+
+}
+// ================ QTableView ================
+class QTableView: QAbstractItemView {
+   ~this() {
+        p_QObject = null;
+    }
+	this() {
+        super();  //  Это заглушка, что бы наследовать D класс не создавая экземпляра в Qt C++
+        p_QObject = (cast(t_vp__vp)pFunQt[339])(null);
+	}  /// Конструктор
+	void setColumnWidth (int column, int width) {
+		(cast(t_v__vp_i_i)pFunQt[354])(QtObj, column, width);
+	}  /// устанавливает ширину указанной колонки
+	void setRowHeight(int row, int high) {
+		(cast(t_v__vp_i_i)pFunQt[355])(QtObj, row, high);
+	}  /// устанавливает высоту указанной строки
+	
+	void setRowHidden( int row, bool hide) {
+		(cast(t_v__vp_i_bool)pFunQt[356])(QtObj, row, hide);
+	}  /// Скрыть указанную строку
+	void setColumnHidden(int column, bool hide) {
+		(cast(t_v__vp_i_bool)pFunQt[357])(QtObj, column, hide);
+	}  /// Скрыть указанную колонку
+
+}
+
+// ================ QTableWidget ================
+class QTableWidget : QTableView {
+   ~this() {
+        p_QObject = null;
+    }
+	this(gWidget parent) {
+		super();  //  Это заглушка, что бы наследовать D класс не создавая экземпляра в Qt C++
+		if (!(parent is null)) {
+			p_QObject = (cast(t_vp__vp)pFunQt[341])(parent.p_QObject);
+		}
+		else {
+			p_QObject = (cast(t_vp__vp)pFunQt[341])(null);
+		}
+	} /// Конструктор, где parent - сылка на родительский виджет
+	void setRowCount(int row) {
+		(cast(t_vp__vp_i)pFunQt[343])(QtObj, row);
+	} /// Установить количество строк в таблице
+	void setColumnCount(int col) {
+		(cast(t_vp__vp_i)pFunQt[344])(QtObj, col);
+	} /// Установить количество столбцов в таблице
+	void* cellWidget(int row, int col) {
+		return (cast(t_vp__vp_i_i)pFunQt[345])(QtObj, row, col);
+	} /// Полчить ссылку на виджет ячейки
+	void setItem(QTableWidgetItem wi, int row, int col) {
+		(cast(t_v__vp_vp_i_i)pFunQt[348])(QtObj, wi.QtObj, row, col);
+	}
+	void insertColumn(int column) {
+		(cast(t_v__vp_i)pFunQt[350])(QtObj, column);
+	} /// Вставить колонку в таблицу
+	void insertRow(int row) {
+		(cast(t_v__vp_i)pFunQt[351])(QtObj, row);
+	} /// Вставить строку в таблицу
+	int currentRow() {
+		return (cast(t_i__vp)pFunQt[352])(QtObj);
+	} /// текущая строка
+	int columnCount() {
+		return (cast(t_i__vp)pFunQt[353])(QtObj);
+	} /// Всего колонок
+	override void setColumnWidth (int column, int width) {
+		(cast(t_v__vp_i_i)pFunQt[354])(QtObj, column, width);
+	}  /// устанавливает ширину указанной колонки
+	void clear() {
+		(cast(t_v__vp)pFunQt[358])(QtObj);
+	} /// Таблица остаётся, значения ячеек удалены
+	void clearContents() {
+		(cast(t_v__vp)pFunQt[359])(QtObj);
+	} /// Таблица остаётся, значения ячеек удалены - но не заголовки
+	string stringFromCell(int row, int col) {
+		QString qs = new QString();	
+		try {
+			(cast(t_v__vp_vp_i_i)pFunQt[361])(QtObj, qs.QtObj, row, col);
+		}
+		catch {
+		}
+		return qs.toUtf8();
+	} /// Вернуть строку из ячейки таблицы    
+}
+// ================ QTableWidgetItem ================
+class QTableWidgetItem: QObject {
+    this() {
+	    super();
+        p_QObject = (cast(t_vp__v)pFunQt[346])();
+    } /// Просто ячейка
+	this(string str) {
+        super();
+        p_QObject = (cast(t_vp__vp)pFunQt[349])( (new QString(str)).QtObj );
+	} /// Изготовить ячейку со строкой
+   ~this() {
+        //(cast(t_v__vp)pFunQt[347])(p_QObject); p_QObject = null;
+    }
+	void setTextAlignment(int aligm) {
+		(cast(t_v__vp_i)pFunQt[360])(QtObj, aligm);
+	} /// Включить выравнивание
+}
+
 // ================ QPaintDevice ================
 class QPaintDevice: QObject  {
     this() {

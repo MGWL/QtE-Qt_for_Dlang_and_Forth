@@ -527,7 +527,7 @@ const tPrint =   8;   // Печатные
 const    tRl =  16;   // Рус Маленькие
 const    tRu =  32;   // Рус Большие
 
-public immutable char[] mm1251_Utf8[sByte] = [ 
+public immutable char[][sByte] mm1251_Utf8 = [ 
 /* 0 */ "\x00", /* 1 */ "\x01", /* 2 */ "\x02", /* 3 */ "\x03",/* 4 */ "\x04",
 /* 5 */ "\x05",/* 6 */ "\x06",/* 7 */ "\x07",/* 8 */ "\x08",/* 9 */ "\x09",
 /* 10 */ "\x0A",/* 11 */ "\x0B",/* 12 */ "\x0C",/* 13 */ "\x0D",/* 14 */ "\x0E",
@@ -583,7 +583,7 @@ public immutable char[] mm1251_Utf8[sByte] = [
 /* 254 */ "\xD1\x8E",/* 255 */ "\xD1\x8F"
 ];
 
-immutable int   mm1251[sByte] = [ 
+immutable int[sByte] mm1251 = [ 
 /* 0 */ tBad,/* 1 */ tBad,/* 2 */ tBad,/* 3 */  tBad,/* 4 */  tBad,/* 5 */  tBad,/* 6 */  tBad,/* 7 */  tBad,/* 8 */  tBad,
 /* 9 */  tBad,/* 10 */ tBad,/* 11 */ tBad,/* 12 */ tBad,/* 13 */ tBad,/* 14 */ tBad,/* 15 */ tBad,/* 16 */ tBad,/* 17 */ tBad,
 /* 18 */ tBad,/* 19 */ tBad,/* 20 */ tBad,/* 21 */ tBad,/* 22 */ tBad,/* 23 */ tBad,/* 24 */ tBad,/* 25 */ tBad,/* 26 */ tBad,

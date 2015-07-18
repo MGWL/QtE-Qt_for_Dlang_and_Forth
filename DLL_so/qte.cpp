@@ -361,6 +361,10 @@ extern "C" void* QT_QObject(QObject * parent) {
 extern "C" void* QT_QObject_parent(QObject* obj) {
      return obj->parent();
 }
+extern "C" QString* QT_QObject_objectName(QObject* obj, QString* qs) {
+    *qs = obj->objectName();
+    return qs;
+}
 
 // ==================== eSlot ======================
 eSlot::eSlot(QObject* parent) : QObject(parent)
@@ -876,6 +880,46 @@ extern "C" void* QT_QFrameNEW(QWidget* parent, Qt::WindowType f) {
 extern "C" void QT_QQFrameDELETE(QFrame* p) {
     delete p;
 }
+
+// ================= QTableView =================
+extern "C" void* QT_QTableViewNEW(QWidget* parent) {
+    return new QTableView(parent);
+}
+extern "C" void QT_QTableViewDELETE(QTableView* p) {
+    delete p;
+}
+// ================= QTableWidget =================
+extern "C" void* QT_QTableWidgetNEW(QWidget* parent) {
+    return new QTableWidget(parent);
+}
+extern "C" void QT_QTableWidgetDELETE(QTableWidget* p) {
+    delete p;
+}
+extern "C" QWidget* QT_QTableWidget_cellWidget(QTableWidget* tw, int row, int column) {
+    return tw->cellWidget(row, column);
+}
+extern "C" void QT_QTableWidget_setItem(QTableWidget* tw, QTableWidgetItem* p, int row, int column) {
+    return tw->setItem(row, column, p);
+}
+extern "C" QString* QT_QTableWidget_stringFromCell(QTableWidget* tw, QString* qs, int row, int column) {
+    qs->append(tw->item(row, column)->text());
+    return qs;
+}
+
+// ================= QTableWidgetItem =================
+extern "C" void* QT_QTableWidgetItemNEW(void) {
+    return  new QTableWidgetItem();
+}
+extern "C" void* QT_QTableWidgetItemNEWqs(QString str) {
+    return  new QTableWidgetItem(str);
+}
+extern "C" void QT_QTableWidgetItemDELETE(QTableWidgetItem* p) {
+    delete p;
+}
+extern "C" void QT_QTableWidget_setTextAligment(QTableWidgetItem* p,  int alignment) {
+    p->setTextAlignment(alignment);
+}
+
 
 // ================= QFont =================
 extern "C" void* QT_QFontNEW(void) {
