@@ -704,8 +704,8 @@ int LoadQt(dll ldll, bool showError) {   ///  Загрузить DLL-ки Qt и 
 
     pFunQt[360] = GetPrAddres(bQtE, hQtE,   "QT_QTableWidget_setTextAligment"); if (!pFunQt[360]) MessageErrorLoad(showError, "QT_QTableWidget_setTextAligment"w, 2);
     pFunQt[361] = GetPrAddres(bQtE, hQtE,   "QT_QTableWidget_stringFromCell"); if (!pFunQt[361]) MessageErrorLoad(showError, "QT_QTableWidget_stringFromCell"w, 2);
-
-
+    pFunQt[362] = GetPrAddres(bGui, hQtGui, "_ZNK10QTableView11columnWidthEi"); if (!pFunQt[362]) MessageErrorLoad(showError, "int QTableView::columnWidth(int col)", 2);
+    pFunQt[363] = GetPrAddres(bGui, hQtGui, "_ZNK10QTableView9rowHeightEi"); if (!pFunQt[363]) MessageErrorLoad(showError, "int QTableView::rowHeight(int row)", 2);
 // ============ setToolTip =======================================
     pFunQt[172] = GetPrAddres(bGui, hQtGui, "_ZN7QWidget10setToolTipERK7QString"); if (!pFunQt[172]) MessageErrorLoad(showError, "QWidget::setToolTip(QString const&)"w, 2);
     pFunQt[173] = GetPrAddres(bGui, hQtGui, "_ZN7QAction10setToolTipERK7QString"); if (!pFunQt[173]) MessageErrorLoad(showError, "QAction::setToolTip(QString const&)"w, 2);
@@ -1515,7 +1515,12 @@ class QTableView: QAbstractItemView {
 	void setColumnHidden(int column, bool hide) {
 		(cast(t_v__vp_i_bool)pFunQt[357])(QtObj, column, hide);
 	}  /// Скрыть указанную колонку
-
+	int columnWidth(int column) {
+		return (cast(t_i__vp_i)pFunQt[362])(QtObj, column);
+	} /// Ширина колонки
+	int rowHeight(int row) {
+		return (cast(t_i__vp_i)pFunQt[363])(QtObj, row);
+	} /// Ширина колонки
 }
 
 // ================ QTableWidget ================

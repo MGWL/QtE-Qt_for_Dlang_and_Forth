@@ -21,8 +21,10 @@ import std.file;
 import std.c.string;
 import std.datetime;
 import std.process;
+import std.ascii;
 import core.sys.windows.windows;
 import qte;             // Работа с Qt
+import ini;              // Работа с INI файлами
 
 import std.ascii;
 // import std.parallelism;
@@ -37,6 +39,13 @@ int   mNamelength;
 // Расскраска для виджетов
 string strElow  = "background: #FCFDC6"; //#F8FFA1";
 string strBlue  = "background: #ACFFF2";
+
+int FFT_width;		// Ширина основной формы, задается в FFT.INI
+int FFT_height;		// Высота основной формы, задается в FFT.INI
+int GridCol0;
+int GridCol1;
+int GridCol2;
+int GridCol3;
 
 QApplication app;       // Основной цикл Qt
 ClassMain wd_Main;
@@ -115,8 +124,8 @@ extern (C) void onAboutQt() {
 // About Program
 extern (C) void onAboutProgram() {
    // writeln("extern (C) void onAboutProgram()");
-msgbox("<h2><p align=center><i><u><font color=red>FF - быстрый поиск файла.</font></i></u></p></h2>
-<p><b>MGW © 2014г. (mgw@yandex.ru)</b></p>
+msgbox("<h2><p align=center><i><u><font color=red>FFT - быстрый поиск файла. Табличный</font></i></u></p></h2>
+<p><b>MGW © 2015г. (mgw@yandex.ru)</b></p>
 <p>Ver 1.0  Windows 32/64 and Linux 32/64</p>
 <hr>
 Source:
@@ -130,21 +139,21 @@ Source:
 Программа состоит из двух частей:
 <ol>
     <li>ffc.exe - Консольная. Создаёт индексый файл.</li>
-    <li>ff.exe  - GUI. Поиск по индексному файлу и визуализация.</li>
+    <li>fft.exe  - GUI. Поиск по индексному файлу и визуализация.</li>
 </ol>
 </p>
 <hr>
 <p>Компиляция Linux 32/64 где -mXX соответственно -m32 или -m64:</p>
 <ol>
-    <li>dmd ff.d asc1251.d qte.d -mXX -release -O -L-ldl -offf.exe</li>
+    <li>dmd fft.d asc1251.d qte.d -mXX -release -O -L-ldl -offf.exe</li>
     <li>dmd ffc.d asc1251.d -mXX -release -O -L-ldl -offfc.exe</li>
 </ol>
 <p>Компиляция Windows 32/64 где -mXX соответственно -m32 или -m64:</p>
 <ol>
-    <li>dmd ff.d asc1251.d qte.d -mXX -release -O -offf.exe</li>
+    <li>dmd fft.d asc1251.d qte.d -mXX -release -O -offf.exe</li>
     <li>dmd ffc.d asc1251.d -mXX -release -O -offfc.exe</li>
 </ol>
-", "О программе FF");
+", "О программе FFT");
 }
 
 
@@ -210,14 +219,39 @@ class ClassMain: QMainWindow {
         prb_prog     = new QProgressBar(null);
         prb_prog.setStyleSheet(tmpQsSet(strBlue));
 
+		// +++++++++++ Работа с INI файлом +++++++++++
+        Ini ini = new Ini("C:/fft.ini");
+        if(ini["Main"] is null) {   // нет INI файл
+            IniSection sec_ABC = ini.addSection("Main");
+            sec_ABC.value("About", "Это INI файл для FFT.EXE - поиск на сервере в ROM");
+            sec_ABC.value(".DOC", "? - Укажите путь до WORD");
+            sec_ABC.value(".XLS", "? - Укажите путь до EXCEL");
 
+            IniSection sec_Shape = ini.addSection("Shape");
+            sec_Shape.value("FFT_width",  "900");
+            sec_Shape.value("FFT_height", "500");
+            sec_Shape.value("GridCol0", "200");
+            sec_Shape.value("GridCol1", "100");
+            sec_Shape.value("GridCol2", "100");
+            sec_Shape.value("GridCol3", "500");
+
+            ini.save();
+        }
+        FFT_width = to!int(ini["Shape"]["FFT_width"]);
+        FFT_height = to!int(ini["Shape"]["FFT_height"]);
+		GridCol0 = to!int(ini["Shape"]["GridCol0"]);
+		GridCol1 = to!int(ini["Shape"]["GridCol1"]);
+		GridCol2 = to!int(ini["Shape"]["GridCol2"]);
+		GridCol3 = to!int(ini["Shape"]["GridCol3"]);
+		// ----------- Работа с INI файлом -----------
+		
         f1 = new QFont();    f1.setPointSize(10);   setFont(f1);
 		// Таблица
 		te_list.setColumnCount(4); // Четыре колонки
-		te_list.setColumnWidth(0, 200);
-		te_list.setColumnWidth(1, 100);
-		te_list.setColumnWidth(2, 100);
-		te_list.setColumnWidth(3, 400);
+		te_list.setColumnWidth(0, GridCol0);
+		te_list.setColumnWidth(1, GridCol1);
+		te_list.setColumnWidth(2, GridCol2);
+		te_list.setColumnWidth(3, GridCol3);
 
         // Кнопки
         kn_Find     = new gPushButton(wd_main, new QString("Поиск F5"));
@@ -282,7 +316,7 @@ class ClassMain: QMainWindow {
         tmpQs1.toUnicode(cast(char*)nameFileIndex.ptr, UTF_8);
         tmpQs.append(tmpQs1);
         setWindowTitle(tmpQs);
-        resize(900, 500);
+        resize(FFT_width, FFT_height);
         
         // Центральная строка меню
         menuBar = new QMenuBar(null);
@@ -340,16 +374,30 @@ class ClassMain: QMainWindow {
     }
     // ----------------------------------------------------------
     void knpWord() {        // Открыть файл в редакторе
-        try {
+		string FileExec;
+		try {
             string nameProc = te_list.stringFromCell(te_list.currentRow(), 3);
-            version(Windows) {
-                auto pid = spawnShell('"' ~ nameProc ~ '"');
-            }
-            version(linux) {
-                auto pid = spawnProcess(["kwrite", nameProc]);
-            }
+			string extNameFile = extension(nameProc);
+			string extNameFileUp; for(int i; i != extNameFile.length; i++) extNameFileUp ~= std.ascii.toUpper(extNameFile[i]);
+			// Тут надо многое проверить
+			Ini ini = new Ini("C:/fft.ini");
+			FileExec = ini["Main"][extNameFileUp];
+			if(FileExec.length == 0) {
+				msgbox(r"Укажите в C:/FFT.INI строку с программой для вызова " ~ extNameFileUp);
+			}
+			else {
+				if(FileExec[0] == '?') {
+				msgbox(r"Укажите в C:/FFT.INI строку с программой для вызова " ~ extNameFileUp);
+				}
+				else {
+					auto edQuest = spawnProcess([FileExec, nameProc]);
+				}
+			}
+//			writeln("[", extNameFileUp,"] --> [", FileExec,"]");
+                // auto edQuest = spawnProcess([MsWord, s]);
+                // auto pid = spawnShell('"' ~ nameProc ~ '"');
         }
-        catch { msgbox("Осуществите поиск и укажите файл."); }
+        catch { msgbox("Возможно не установлены программы на это расширение в INI."); }
     }
     // ----------------------------------------------------------
     void loadIndex() {      // Прочитать файл в память
@@ -407,6 +455,19 @@ class ClassMain: QMainWindow {
         char[] str_cmp1, str_cmp2, str_cmp3, str_cmp4;
         char[] str_empty = cast(char[])"";
         string str_compare;
+
+		// +++++++++++ Работа с INI файлом +++++++++++
+		// Запомним текущую позицию и ширину колонок
+        Ini ini = new Ini("C:/fft.ini");
+        IniSection sec_Shape = ini.addSection("Shape");
+        sec_Shape.value("FFT_width",   to!string(width));
+        sec_Shape.value("FFT_height",  to!string(height));
+        sec_Shape.value("GridCol0",  to!string(te_list.columnWidth(0)));
+        sec_Shape.value("GridCol1",  to!string(te_list.columnWidth(1)));
+        sec_Shape.value("GridCol2",  to!string(te_list.columnWidth(2)));
+        sec_Shape.value("GridCol3",  to!string(te_list.columnWidth(3)));
+        ini.save();
+		// ----------- Работа с INI файлом -----------
         
         mNamelength = cast(int)mName.length-1; // Для ProgressBar
         // Подготовим аргументы сравнения
