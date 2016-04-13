@@ -1,4 +1,4 @@
-QtE
+QtE - depricated.   There is more modern version QtE5 with support of Qt-5.
 ===
 
 Qt gui library for Dlang (dmd D2).
